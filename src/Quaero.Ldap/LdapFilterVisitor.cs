@@ -13,16 +13,14 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
     public override StringBuilder VisitAnd(AndFilter filter, StringBuilder builder)
     {
         builder = builder.Append("(&");
-        builder = filter.Left.Accept(this, builder);
-        builder = filter.Right.Accept(this, builder);
+        builder = VisitBinaryChain(this, filter, builder);
         return builder.Append(')');
     }
 
     public override StringBuilder VisitOr(OrFilter filter, StringBuilder builder)
     {
         builder = builder.Append("(|");
-        builder = filter.Left.Accept(this, builder);
-        builder = filter.Right.Accept(this, builder);
+        builder = VisitBinaryChain(this, filter, builder);
         return builder.Append(')');    
     }
 
@@ -72,5 +70,22 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
             builder = builder.Append(suffix);
         }
         return builder.Append(')');
+    }
+    
+    private static StringBuilder VisitBinaryChain<TFilter>(LdapFilterVisitor visitor, TFilter filter, StringBuilder builder)
+        where TFilter : BinaryFilter
+    {
+        builder = VisitBranch(visitor, filter.Left, builder);
+        return VisitBranch(visitor, filter.Right, builder);
+
+        static StringBuilder VisitBranch(LdapFilterVisitor visitor, Filter filter, StringBuilder builder)
+        {
+            if (filter is TFilter branch)
+            {
+                return VisitBinaryChain(visitor, branch, builder);
+            }
+
+            return filter.Accept(visitor, builder);
+        }
     }
 }

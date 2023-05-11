@@ -1,16 +1,10 @@
 namespace Quaero;
 
-public sealed class AndFilter : Filter
+public sealed class AndFilter : BinaryFilter
 {
-    public AndFilter(Filter left, Filter right)
+    public AndFilter(Filter left, Filter right) : base(left, right)
     {
-        Left = left ?? throw new ArgumentNullException(nameof(left));
-        Right = right ?? throw new ArgumentNullException(nameof(right));
     }
-
-    public Filter Left { get; }
-
-    public Filter Right { get; }
 
     public override TState Accept<TResult, TState>(IFilterVisitor<TResult, TState> visitor, TState state) => 
         visitor.VisitAnd(this, state);
