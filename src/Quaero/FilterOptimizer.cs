@@ -44,20 +44,26 @@ public sealed class FilterOptimizer : FilterVisitor
             return le.Negate();
         }
 
-        var innerType = filter.Inner.GetType();
-        if (!innerType.IsGenericType)
+        // not + eq -> ne
+        // not + ne -> eq
+        if (IsEqualFilter(filter.Inner))
         {
-            return filter;
-        }
-
-        var typeDefinition = innerType.GetGenericTypeDefinition();
-        if (typeDefinition == typeof(EqualFilter<>) || typeDefinition == typeof(NotEqualFilter<>))
-        {
-            // not + eq -> ne
-            // not + ne -> eq
             return filter.Inner.Negate();
         }
 
         return filter;
+    }
+
+    private static bool IsEqualFilter(Filter filter)
+    {
+        var type = filter.GetType();
+        if (!type.IsGenericType)
+        {
+            return false;
+        }
+
+        var typeDefinition = type.GetGenericTypeDefinition();
+        return typeDefinition == typeof(EqualFilter<>)
+               ||typeDefinition == typeof(NotEqualFilter<>);
     }
 }
