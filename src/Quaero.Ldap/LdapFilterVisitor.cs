@@ -40,13 +40,13 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         VisitPropertyFilter(filter, builder, prefix: "*");
 
     public override StringBuilder VisitGreaterThan(GreaterThanFilter filter, StringBuilder builder) =>
-        VisitNot(Filter.Not(filter.Negate()), builder);
+        VisitNot(new NotFilter(filter.Negate()), builder);
 
     public override StringBuilder VisitGreaterThanOrEqual(GreaterThanOrEqualFilter filter, StringBuilder builder) => 
         VisitPropertyFilter(filter, builder, ">=");
 
     public override StringBuilder VisitLessThan(LessThanFilter filter, StringBuilder builder) => 
-        VisitNot(Filter.Not(filter.Negate()), builder);
+        VisitNot(new NotFilter(filter.Negate()), builder);
 
     public override StringBuilder VisitLessThanOrEqual(LessThanOrEqualFilter filter, StringBuilder builder) => 
         VisitPropertyFilter(filter, builder, "<=");
