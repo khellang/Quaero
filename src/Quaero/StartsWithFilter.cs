@@ -10,5 +10,5 @@ public sealed class StartsWithFilter : PropertyFilter<string?>
     public override TResult Accept<TResult>(IFilterVisitor<TResult> visitor) => 
         visitor.VisitStartsWith(this);
 
-    public override string ToString() => $"startsWith({Name}, {Value})";
+    public override string ToString() => $"{Name} startsWith {FormatValue(Value)}";
 }

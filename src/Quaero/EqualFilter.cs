@@ -12,5 +12,5 @@ public sealed class EqualFilter<T> : PropertyFilter<T?>
 
     public override Filter Negate() => NotEqual(Name, Value);
 
-    public override string ToString() => $"{Name} == {Value}";
+    public override string ToString() => $"{Name} eq {FormatValue(Value)}";
 }

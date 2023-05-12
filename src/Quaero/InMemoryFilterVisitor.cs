@@ -31,7 +31,7 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
     }
 
     public Func<T, bool> VisitNotEqual<TValue>(NotEqualFilter<TValue> filter) =>
-        VisitNot(Filter.Not(Filter.Equal(filter.Name, filter.Value)));
+        VisitNot(new NotFilter(new EqualFilter<TValue>(filter.Name, filter.Value)));
 
     public Func<T, bool> VisitStartsWith(StartsWithFilter filter) => 
         resource => VisitStringFilter(resource, filter, (x, y) => x.StartsWith(y, StringComparison.Ordinal));

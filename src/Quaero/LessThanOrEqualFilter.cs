@@ -14,5 +14,5 @@ public sealed class LessThanOrEqualFilter : PropertyFilter<IComparable>
 
     public override Filter Negate() => GreaterThan(Name, Value);
 
-    public override string ToString() => $"{Name} <= {Value}";
+    public override string ToString() => $"{Name} le {FormatValue(Value)}";
 }

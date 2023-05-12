@@ -31,7 +31,7 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         VisitPropertyFilter(filter, builder);
 
     public override StringBuilder VisitNotEqual<T>(NotEqualFilter<T> filter, StringBuilder builder) => 
-        VisitNot(Filter.Not(Filter.Equal(filter.Name, filter.Value)), builder);
+        VisitNot(new NotFilter(Filter.Equal(filter.Name, filter.Value)), builder);
 
     public override StringBuilder VisitStartsWith(StartsWithFilter filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder, suffix: "*");

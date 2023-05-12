@@ -56,7 +56,9 @@ public sealed class MicrosoftGraphFilterVisitor : StringFilterVisitor
     private static string FormatValue<TValue>(TValue? value) => value switch
     {
         null => "null",
-        string @string => $"'{Escape(@string)}'",
+        true => "true",
+        false => "false",
+        string str => $"'{Escape(str)}'",
         DateTime dateTime => dateTime.ToString("O"),
         DateTimeOffset dateTimeOffset => dateTimeOffset.ToString("O"),
         IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),

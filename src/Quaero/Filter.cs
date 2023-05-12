@@ -2,31 +2,31 @@ namespace Quaero;
 
 public abstract class Filter
 {
-    public static EqualFilter<T> Equal<T>(string name, T? value) => new(name, value);
+    public static Filter Equal<T>(string name, T? value) => new EqualFilter<T>(name, value);
 
-    public static NotEqualFilter<T> NotEqual<T>(string name, T? value) => new(name, value);
+    public static Filter NotEqual<T>(string name, T? value) => new NotEqualFilter<T>(name, value);
     
-    public static StartsWithFilter StartsWith(string name, string? value) => new(name, value);
+    public static Filter StartsWith(string name, string? value) => new StartsWithFilter(name, value);
 
-    public static EndsWithFilter EndsWith(string name, string? value) => new(name, value);
+    public static Filter EndsWith(string name, string? value) => new EndsWithFilter(name, value);
 
-    public static GreaterThanFilter GreaterThan(string name, IComparable value) => new(name, value);
+    public static Filter GreaterThan(string name, IComparable value) => new GreaterThanFilter(name, value);
 
-    public static GreaterThanOrEqualFilter GreaterThanOrEqual(string name, IComparable value) => new(name, value);
+    public static Filter GreaterThanOrEqual(string name, IComparable value) => new GreaterThanOrEqualFilter(name, value);
     
-    public static LessThanFilter LessThan(string name, IComparable value) => new(name, value);
+    public static Filter LessThan(string name, IComparable value) => new LessThanFilter(name, value);
 
-    public static LessThanOrEqualFilter LessThanOrEqual(string name, IComparable value) => new(name, value);
+    public static Filter LessThanOrEqual(string name, IComparable value) => new LessThanOrEqualFilter(name, value);
 
-    public static NotFilter Not(Filter filter) => new(filter);
+    public static Filter Not(Filter filter) => new NotFilter(filter);
 
-    public static AndFilter And(Filter left, Filter right) => new(left, right);
+    public static Filter And(Filter left, Filter right) => new AndFilter(left, right);
 
-    public static OrFilter Or(Filter left, Filter right) => new(left, right);
+    public static Filter Or(Filter left, Filter right) => new OrFilter(left, right);
 
-    public AndFilter And(Filter other) => And(this, other);
+    public Filter And(Filter other) => And(this, other);
 
-    public OrFilter Or(Filter other) => Or(this, other);
+    public Filter Or(Filter other) => Or(this, other);
 
     public virtual Filter Negate() => Not(this);
     

@@ -17,5 +17,5 @@ public sealed class NotFilter : Filter
 
     public override Filter Negate() => Inner;
 
-    public override string ToString() => $"!({Inner})";
+    public override string ToString() => $"not({Inner})";
 }

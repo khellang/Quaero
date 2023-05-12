@@ -14,5 +14,5 @@ public sealed class AndFilter : BinaryFilter
 
     public override Filter Negate() => Or(Left.Negate(), Right.Negate());
     
-    public override string ToString() => $"({Left} && {Right})";
+    public override string ToString() => $"({Left} and {Right})";
 }

@@ -10,5 +10,5 @@ public sealed class EndsWithFilter : PropertyFilter<string?>
     public override TResult Accept<TResult>(IFilterVisitor<TResult> visitor) => 
         visitor.VisitEndsWith(this);
 
-    public override string ToString() => $"endsWith({Name}, {Value})";
+    public override string ToString() => $"{Name} endsWith {FormatValue(Value)}";
 }
