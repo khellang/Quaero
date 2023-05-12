@@ -11,30 +11,14 @@ public sealed class MicrosoftGraphFilterVisitor : StringFilterVisitor
 
     public static string Transform(Filter filter) => Instance.Visit(filter);
 
-    public override StringBuilder VisitAnd(AndFilter filter, StringBuilder builder)
-    {
-        builder = builder.Append('(');
-        builder = filter.Left.Accept(this, builder);
-        builder = builder.Append(" and ");
-        builder = filter.Right.Accept(this, builder);
-        return builder.Append(')');
-    }
+    public override StringBuilder VisitAnd(AndFilter filter, StringBuilder builder) =>
+        VisitBinary(filter, builder, "and");
 
-    public override StringBuilder VisitOr(OrFilter filter, StringBuilder builder)
-    {
-        builder = builder.Append('(');
-        builder = filter.Left.Accept(this, builder);
-        builder = builder.Append(" or ");
-        builder = filter.Right.Accept(this, builder);
-        return builder.Append(')');
-    }
+    public override StringBuilder VisitOr(OrFilter filter, StringBuilder builder) =>
+        VisitBinary(filter, builder, "or");
 
-    public override StringBuilder VisitNot(NotFilter filter, StringBuilder builder)
-    {
-        builder = builder.Append("not(");
-        builder = filter.Inner.Accept(this, builder);
-        return builder.Append(')');
-    }
+    public override StringBuilder VisitNot(NotFilter filter, StringBuilder builder) => 
+        builder.Append("not(").Append(this, filter.Inner).Append(')');
 
     public override StringBuilder VisitEqual<TValue>(EqualFilter<TValue> filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "eq");
@@ -59,6 +43,9 @@ public sealed class MicrosoftGraphFilterVisitor : StringFilterVisitor
 
     public override StringBuilder VisitLessThanOrEqual(LessThanOrEqualFilter filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "le");
+
+    private StringBuilder VisitBinary(BinaryFilter filter, StringBuilder builder, string @operator) => 
+        builder.Append('(').Append(this, filter.Left).Append(' ').Append(@operator).Append(' ').Append(this, filter.Right).Append(')');
 
     private static StringBuilder InfixOperator<TValue>(PropertyFilter<TValue> filter, StringBuilder builder, string @operator) =>
         builder.Append(filter.Name).Append(' ').Append(@operator).Append(' ').Append(FormatValue(filter.Value));

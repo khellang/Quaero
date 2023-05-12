@@ -24,12 +24,8 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         return builder.Append(')');    
     }
 
-    public override StringBuilder VisitNot(NotFilter filter, StringBuilder builder)
-    {
-        builder = builder.Append("(!");
-        builder = filter.Inner.Accept(this, builder);
-        return builder.Append(')');    
-    }
+    public override StringBuilder VisitNot(NotFilter filter, StringBuilder builder) => 
+        builder.Append("(!").Append(this, filter.Inner).Append(')');
 
     public override StringBuilder VisitEqual<T>(EqualFilter<T> filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder);
