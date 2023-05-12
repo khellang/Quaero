@@ -24,8 +24,15 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         return builder.Append(')');    
     }
 
-    public override StringBuilder VisitNot(NotFilter filter, StringBuilder builder) => 
-        builder.Append("(!").Append(this, filter.Inner).Append(')');
+    public override StringBuilder VisitNot(NotFilter filter, StringBuilder builder)
+    {
+        if (filter.Inner is EqualFilter<object> { Value: null } eq)
+        {
+            return VisitFilter(eq.Name, "*", builder);
+        }
+        
+        return builder.Append("(!").Append(this, filter.Inner).Append(')');
+    }
 
     public override StringBuilder VisitEqual<T>(EqualFilter<T> filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder);
@@ -53,14 +60,17 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
 
     private static string FormatValue<TValue>(TValue? value) => value?.ToString() ?? "null";
 
-    private static StringBuilder VisitPropertyFilter<TValue>(PropertyFilter<TValue> filter, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "")
+    private static StringBuilder VisitPropertyFilter<TValue>(PropertyFilter<TValue> filter, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "") => 
+        VisitFilter(filter.Name, filter.Value, builder, @operator, prefix, suffix);
+
+    private static StringBuilder VisitFilter<TValue>(string name, TValue value, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "")
     {
-        builder = builder.Append('(').Append(filter.Name).Append(@operator);
+        builder = builder.Append('(').Append(name).Append(@operator);
         if (!string.IsNullOrEmpty(prefix))
         {
             builder = builder.Append(prefix);
         }
-        builder = builder.Append(FormatValue(filter.Value));
+        builder = builder.Append(FormatValue(value));
         if (!string.IsNullOrEmpty(suffix))
         {
             builder = builder.Append(suffix);
