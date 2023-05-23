@@ -25,11 +25,14 @@ public static class FilterParser
     private static TokenListParser<FilterToken, object?> Null { get; } =
         Token.EqualToValue(FilterToken.Identifier, "null").Value((object?)null);
 
-    private static TokenListParser<FilterToken, BinaryOperator> And { get; } =
+    private static TokenListParser<FilterToken, BinaryOperator> AndOperator { get; } =
         Token.EqualToValue(FilterToken.Identifier, "and").Value(BinaryOperator.And);
 
-    private static TokenListParser<FilterToken, BinaryOperator> Or { get; } =
+    private static TokenListParser<FilterToken, BinaryOperator> OrOperator { get; } =
         Token.EqualToValue(FilterToken.Identifier, "or").Value(BinaryOperator.Or);
+
+    private static TokenListParser<FilterToken, BinaryOperator> BinaryOperators { get; } =
+        AndOperator.Or(OrOperator);
 
     private static TokenListParser<FilterToken, object?> Value { get; } =
         String.AsNullable()
@@ -45,23 +48,23 @@ public static class FilterParser
         from operand in Value
         select GetFilter(identifier, @operator, operand);
 
-    private static readonly TokenListParser<FilterToken, Filter> Factor =
+    private static readonly TokenListParser<FilterToken, Filter> Group =
         (from lparen in Token.EqualTo(FilterToken.LParen)
-            from expr in Parse.Ref(() => Expr!)
+            from expr in Parse.Ref(() => Expression!)
             from rparen in Token.EqualTo(FilterToken.RParen)
             select expr)
         .Or(Predicate);
 
     private static TokenListParser<FilterToken, Filter> Operand { get; } =
         (from @operator in Token.EqualToValue(FilterToken.Identifier, "not")
-            from predicate in Factor
-            select (Filter)Filter.Not(predicate))
-        .Or(Factor)
+            from predicate in Group
+            select Filter.Not(predicate))
+        .Or(Group)
         .Named("Expression");
 
-    private static TokenListParser<FilterToken, Filter> Expr { get; } = Parse.Chain(And.Or(Or), Operand, MakeBinary);
+    private static TokenListParser<FilterToken, Filter> Expression { get; } = Parse.Chain(BinaryOperators, Operand, MakeBinary);
 
-    public static TokenListParser<FilterToken, Filter> Instance { get; } = Expr.AtEnd();
+    public static TokenListParser<FilterToken, Filter> Instance { get; } = Expression.AtEnd();
 
     private static Filter MakeBinary(BinaryOperator @operator, Filter left, Filter right) => @operator switch
     {
@@ -102,15 +105,15 @@ public static class FilterParser
         _ => throw new ParseException($"Value {value} is not supported.")
     };
 
-    private static Filter GetEqualFilter(string name, object? value)
+    private static Filter GetEqualFilter(string name, object? value) => 
+        CreateFilter(typeof(EqualFilter<>), name, value);
+
+    private static Filter GetNotEqualFilter(string name, object? value) => 
+        CreateFilter(typeof(NotEqualFilter<>), name, value);
+
+    private static Filter CreateFilter(Type filterType, string name, object? value)
     {
-        var type = typeof(EqualFilter<>).MakeGenericType(value?.GetType() ?? typeof(object));
-        return (Filter)Activator.CreateInstance(type, name, value);
-    }
-    
-    private static Filter GetNotEqualFilter(string name, object? value)
-    {
-        var type = typeof(NotEqualFilter<>).MakeGenericType(value?.GetType() ?? typeof(object));
+        var type = filterType.MakeGenericType(value?.GetType() ?? typeof(object));
         return (Filter)Activator.CreateInstance(type, name, value);
     }
 }
