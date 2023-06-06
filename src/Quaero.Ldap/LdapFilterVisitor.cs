@@ -29,14 +29,24 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
     {
         if (filter.Inner is EqualFilter<object> { Value: null } eq)
         {
-            return VisitFilter(eq.Name, "*", builder);
+            return VisitFilter(eq.Name, string.Empty, builder, prefix: "*");
         }
 
         return builder.Append("(!").Append(this, filter.Inner).Append(')');
     }
 
-    public override StringBuilder VisitEqual<T>(EqualFilter<T> filter, StringBuilder builder) =>
-        VisitPropertyFilter(filter, builder);
+    public override StringBuilder VisitEqual<T>(EqualFilter<T> filter, StringBuilder builder)
+    {
+        if (filter.Value is not null)
+        {
+            return VisitPropertyFilter(filter, builder);
+        }
+
+        builder = builder.Append("(!");
+        builder = VisitFilter(filter.Name, string.Empty, builder, prefix: "*");
+        return builder.Append(')');
+
+    }
 
     public override StringBuilder VisitNotEqual<T>(NotEqualFilter<T> filter, StringBuilder builder) =>
         VisitNot(new NotFilter(Filter.Equal(filter.Name, filter.Value)), builder);
