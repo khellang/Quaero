@@ -6,4 +6,8 @@
     <ItemGroup>
       <ProjectReference Include="..\Quaero\Quaero.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AntiLdapInjection" Version="1.1.4" />
+    </ItemGroup>
 </Project>

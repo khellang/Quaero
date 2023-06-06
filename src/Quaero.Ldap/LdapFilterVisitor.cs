@@ -1,4 +1,5 @@
 using System.Text;
+using AntiLdapInjection;
 
 namespace Quaero.Ldap;
 
@@ -58,7 +59,14 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
     public override StringBuilder VisitLessThanOrEqual(LessThanOrEqualFilter filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder, "<=");
 
-    private static string FormatValue<TValue>(TValue? value) => value?.ToString() ?? "null";
+    private static string FormatValue<TValue>(TValue? value) => value switch
+    {
+        true => "TRUE",
+        false => "FALSE",
+        Guid guid => BitConverter.ToString(guid.ToByteArray()),
+        string str => LdapEncoder.FilterEncode(str),
+        _ => value?.ToString() ?? "NULL"
+    };
 
     private static StringBuilder VisitPropertyFilter<TValue>(PropertyFilter<TValue> filter, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "") =>
         VisitFilter(filter.Name, filter.Value, builder, @operator, prefix, suffix);
