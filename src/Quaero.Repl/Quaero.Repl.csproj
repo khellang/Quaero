@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>Quaero.Testing</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Quaero.Ldap\Quaero.Ldap.csproj" />
+      <ProjectReference Include="..\Quaero.MicrosoftGraph\Quaero.MicrosoftGraph.csproj" />
+      <ProjectReference Include="..\Quaero\Quaero.csproj" />
+    </ItemGroup>
+</Project>
