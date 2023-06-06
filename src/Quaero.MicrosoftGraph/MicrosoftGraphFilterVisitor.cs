@@ -17,13 +17,13 @@ public sealed class MicrosoftGraphFilterVisitor : StringFilterVisitor
     public override StringBuilder VisitOr(OrFilter filter, StringBuilder builder) =>
         VisitBinary(filter, builder, "or");
 
-    public override StringBuilder VisitNot(NotFilter filter, StringBuilder builder) => 
+    public override StringBuilder VisitNot(NotFilter filter, StringBuilder builder) =>
         builder.Append("not(").Append(this, filter.Inner).Append(')');
 
     public override StringBuilder VisitEqual<TValue>(EqualFilter<TValue> filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "eq");
 
-    public override StringBuilder VisitNotEqual<TValue>(NotEqualFilter<TValue> filter, StringBuilder builder) => 
+    public override StringBuilder VisitNotEqual<TValue>(NotEqualFilter<TValue> filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "ne");
 
     public override StringBuilder VisitStartsWith(StartsWithFilter filter, StringBuilder builder) =>
@@ -44,7 +44,7 @@ public sealed class MicrosoftGraphFilterVisitor : StringFilterVisitor
     public override StringBuilder VisitLessThanOrEqual(LessThanOrEqualFilter filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "le");
 
-    private StringBuilder VisitBinary(BinaryFilter filter, StringBuilder builder, string @operator) => 
+    private StringBuilder VisitBinary(BinaryFilter filter, StringBuilder builder, string @operator) =>
         builder.Append('(').Append(this, filter.Left).Append(' ').Append(@operator).Append(' ').Append(this, filter.Right).Append(')');
 
     private static StringBuilder InfixOperator<TValue>(PropertyFilter<TValue> filter, StringBuilder builder, string @operator) =>

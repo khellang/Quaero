@@ -20,6 +20,6 @@ public abstract class PropertyFilter<T> : Filter
         IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
         _ => value.ToString() ?? "null"
     };
-    
+
     private static string Escape(string value) => value.Replace("'", "''");
 }

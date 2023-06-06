@@ -6,10 +6,10 @@ public sealed class GreaterThanFilter : PropertyFilter<IComparable>
     {
     }
 
-    public override TState Accept<TResult, TState>(IFilterVisitor<TResult, TState> visitor, TState state) => 
+    public override TState Accept<TResult, TState>(IFilterVisitor<TResult, TState> visitor, TState state) =>
         visitor.VisitGreaterThan(this, state);
 
-    public override TResult Accept<TResult>(IFilterVisitor<TResult> visitor) => 
+    public override TResult Accept<TResult>(IFilterVisitor<TResult> visitor) =>
         visitor.VisitGreaterThan(this);
 
     public override Filter Negate() => LessThanOrEqual(Name, Value);

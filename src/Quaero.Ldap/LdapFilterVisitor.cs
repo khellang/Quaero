@@ -21,7 +21,7 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
     {
         builder = builder.Append("(|");
         builder = VisitBinaryChain(this, filter, builder);
-        return builder.Append(')');    
+        return builder.Append(')');
     }
 
     public override StringBuilder VisitNot(NotFilter filter, StringBuilder builder)
@@ -30,37 +30,37 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         {
             return VisitFilter(eq.Name, "*", builder);
         }
-        
+
         return builder.Append("(!").Append(this, filter.Inner).Append(')');
     }
 
     public override StringBuilder VisitEqual<T>(EqualFilter<T> filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder);
 
-    public override StringBuilder VisitNotEqual<T>(NotEqualFilter<T> filter, StringBuilder builder) => 
+    public override StringBuilder VisitNotEqual<T>(NotEqualFilter<T> filter, StringBuilder builder) =>
         VisitNot(new NotFilter(Filter.Equal(filter.Name, filter.Value)), builder);
 
     public override StringBuilder VisitStartsWith(StartsWithFilter filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder, suffix: "*");
 
-    public override StringBuilder VisitEndsWith(EndsWithFilter filter, StringBuilder builder) => 
+    public override StringBuilder VisitEndsWith(EndsWithFilter filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder, prefix: "*");
 
     public override StringBuilder VisitGreaterThan(GreaterThanFilter filter, StringBuilder builder) =>
         VisitNot(new NotFilter(filter.Negate()), builder);
 
-    public override StringBuilder VisitGreaterThanOrEqual(GreaterThanOrEqualFilter filter, StringBuilder builder) => 
+    public override StringBuilder VisitGreaterThanOrEqual(GreaterThanOrEqualFilter filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder, ">=");
 
-    public override StringBuilder VisitLessThan(LessThanFilter filter, StringBuilder builder) => 
+    public override StringBuilder VisitLessThan(LessThanFilter filter, StringBuilder builder) =>
         VisitNot(new NotFilter(filter.Negate()), builder);
 
-    public override StringBuilder VisitLessThanOrEqual(LessThanOrEqualFilter filter, StringBuilder builder) => 
+    public override StringBuilder VisitLessThanOrEqual(LessThanOrEqualFilter filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder, "<=");
 
     private static string FormatValue<TValue>(TValue? value) => value?.ToString() ?? "null";
 
-    private static StringBuilder VisitPropertyFilter<TValue>(PropertyFilter<TValue> filter, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "") => 
+    private static StringBuilder VisitPropertyFilter<TValue>(PropertyFilter<TValue> filter, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "") =>
         VisitFilter(filter.Name, filter.Value, builder, @operator, prefix, suffix);
 
     private static StringBuilder VisitFilter<TValue>(string name, TValue value, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "")
@@ -77,7 +77,7 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         }
         return builder.Append(')');
     }
-    
+
     private static StringBuilder VisitBinaryChain<TFilter>(LdapFilterVisitor visitor, TFilter filter, StringBuilder builder)
         where TFilter : BinaryFilter
     {

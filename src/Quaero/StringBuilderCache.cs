@@ -50,7 +50,6 @@ internal static class StringBuilderCache
         _cachedInstance = null;
         builder.Clear();
         return builder;
-
     }
 
     /// <summary>

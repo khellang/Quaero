@@ -1,3 +1,5 @@
+using Superpower;
+
 namespace Quaero;
 
 public abstract class Filter
@@ -5,7 +7,7 @@ public abstract class Filter
     public static Filter Equal<T>(string name, T? value) => new EqualFilter<T>(name, value);
 
     public static Filter NotEqual<T>(string name, T? value) => new NotEqualFilter<T>(name, value);
-    
+
     public static Filter StartsWith(string name, string? value) => new StartsWithFilter(name, value);
 
     public static Filter EndsWith(string name, string? value) => new EndsWithFilter(name, value);
@@ -13,7 +15,7 @@ public abstract class Filter
     public static Filter GreaterThan(string name, IComparable value) => new GreaterThanFilter(name, value);
 
     public static Filter GreaterThanOrEqual(string name, IComparable value) => new GreaterThanOrEqualFilter(name, value);
-    
+
     public static Filter LessThan(string name, IComparable value) => new LessThanFilter(name, value);
 
     public static Filter LessThanOrEqual(string name, IComparable value) => new LessThanOrEqualFilter(name, value);
@@ -29,7 +31,13 @@ public abstract class Filter
     public Filter Or(Filter other) => Or(this, other);
 
     public virtual Filter Negate() => Not(this);
-    
+
+    public static Filter Parse(string filter)
+    {
+        var tokens = FilterTokenizer.Instance.Tokenize(filter);
+        return FilterParser.Instance.Parse(tokens);
+    }
+
     public abstract TState Accept<TResult, TState>(IFilterVisitor<TResult, TState> visitor, TState state);
 
     public abstract TResult Accept<TResult>(IFilterVisitor<TResult> visitor);

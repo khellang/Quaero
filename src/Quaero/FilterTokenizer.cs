@@ -5,7 +5,7 @@ using Superpower.Tokenizers;
 
 namespace Quaero;
 
-public static class FilterTokenizer
+internal static class FilterTokenizer
 {
     private static TextParser<Unit> FilterStringToken { get; } =
         from open in Character.EqualTo('\'')
@@ -14,7 +14,7 @@ public static class FilterTokenizer
             .IgnoreMany()
         from close in Character.EqualTo('\'')
         select Unit.Value;
-    
+
     private static TextParser<Unit> FilterNumberToken { get; } =
         from sign in Character.EqualTo('-').OptionalOrDefault()
         from first in Character.Digit
@@ -24,6 +24,14 @@ public static class FilterTokenizer
     public static Tokenizer<FilterToken> Instance { get; } =
         new TokenizerBuilder<FilterToken>()
             .Ignore(Span.WhiteSpace)
+            .Match(Span.EqualToIgnoreCase("eq"), FilterToken.Equal, requireDelimiters: true)
+            .Match(Span.EqualToIgnoreCase("ne"), FilterToken.NotEqual, requireDelimiters: true)
+            .Match(Span.EqualToIgnoreCase("lt"), FilterToken.LessThan, requireDelimiters: true)
+            .Match(Span.EqualToIgnoreCase("le"), FilterToken.LessThanOrEqual, requireDelimiters: true)
+            .Match(Span.EqualToIgnoreCase("gt"), FilterToken.GreaterThan, requireDelimiters: true)
+            .Match(Span.EqualToIgnoreCase("ge"), FilterToken.GreaterThanOrEqual, requireDelimiters: true)
+            .Match(Span.EqualToIgnoreCase("startsWith"), FilterToken.StartsWith, requireDelimiters: true)
+            .Match(Span.EqualToIgnoreCase("endsWith"), FilterToken.EndsWith, requireDelimiters: true)
             .Match(Character.EqualTo('('), FilterToken.LParen)
             .Match(Character.EqualTo(')'), FilterToken.RParen)
             .Match(FilterStringToken, FilterToken.String)

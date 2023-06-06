@@ -6,6 +6,6 @@ namespace Quaero;
 
 public static class FilterExtensions
 {
-    public static string ToLdapQuery(this Filter filter) => 
+    public static string ToLdapQuery(this Filter filter) =>
         LdapFilterVisitor.Transform(filter);
 }

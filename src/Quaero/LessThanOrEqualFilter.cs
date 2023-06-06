@@ -6,7 +6,7 @@ public sealed class LessThanOrEqualFilter : PropertyFilter<IComparable>
     {
     }
 
-    public override TState Accept<TResult, TState>(IFilterVisitor<TResult, TState> visitor, TState state) => 
+    public override TState Accept<TResult, TState>(IFilterVisitor<TResult, TState> visitor, TState state) =>
         visitor.VisitLessThanOrEqual(this, state);
 
     public override TResult Accept<TResult>(IFilterVisitor<TResult> visitor) =>

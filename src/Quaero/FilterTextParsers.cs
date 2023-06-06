@@ -22,11 +22,11 @@ public static class FilterTextParsers
                             Span.MatchedBy(Character.HexDigit.Repeat(4))
                                 .Apply(Numerics.HexDigitsUInt32)
                                 .Select(cc => (char)cc)))
-                        .Named("escape sequence")))                
+                        .Named("escape sequence")))
             .Many()
         from close in Character.EqualTo('\'')
         select new string(chars);
-    
+
     public static TextParser<double> Number { get; } =
         from sign in Character.EqualTo('-').Value(-1.0).OptionalOrDefault(1.0)
         from whole in Numerics.Natural.Select(n => double.Parse(n.ToStringValue()))

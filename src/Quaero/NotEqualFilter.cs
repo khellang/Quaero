@@ -4,7 +4,7 @@ public sealed class NotEqualFilter<T> : PropertyFilter<T?>
 {
     public NotEqualFilter(string name, T? value) : base(name, value) { }
 
-    public override TState Accept<TResult, TState>(IFilterVisitor<TResult, TState> visitor, TState state) => 
+    public override TState Accept<TResult, TState>(IFilterVisitor<TResult, TState> visitor, TState state) =>
         visitor.VisitNotEqual(this, state);
 
     public override TResult Accept<TResult>(IFilterVisitor<TResult> visitor) =>

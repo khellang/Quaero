@@ -4,35 +4,70 @@ using Superpower.Parsers;
 
 namespace Quaero;
 
-public static class FilterParser
+internal static class FilterParser
 {
     private static TokenListParser<FilterToken, object> String { get; } =
         Token.EqualTo(FilterToken.String)
             .Apply(FilterTextParsers.String)
             .Select(s => (object)s);
-    
+
     private static TokenListParser<FilterToken, object> Number { get; } =
         Token.EqualTo(FilterToken.Number)
             .Apply(FilterTextParsers.Number)
             .Select(n => (object)n);
 
     private static TokenListParser<FilterToken, object> True { get; } =
-        Token.EqualToValue(FilterToken.Identifier, "true").Value((object)true);
-    
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "true").Value((object)true);
+
     private static TokenListParser<FilterToken, object> False { get; } =
-        Token.EqualToValue(FilterToken.Identifier, "false").Value((object)false);
-    
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "false").Value((object)false);
+
     private static TokenListParser<FilterToken, object?> Null { get; } =
-        Token.EqualToValue(FilterToken.Identifier, "null").Value((object?)null);
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "null").Value((object?)null);
 
-    private static TokenListParser<FilterToken, BinaryOperator> AndOperator { get; } =
-        Token.EqualToValue(FilterToken.Identifier, "and").Value(BinaryOperator.And);
+    private static TokenListParser<FilterToken, LogicalOperator> AndOperator { get; } =
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "and").Value(LogicalOperator.And);
 
-    private static TokenListParser<FilterToken, BinaryOperator> OrOperator { get; } =
-        Token.EqualToValue(FilterToken.Identifier, "or").Value(BinaryOperator.Or);
+    private static TokenListParser<FilterToken, LogicalOperator> OrOperator { get; } =
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "or").Value(LogicalOperator.Or);
 
-    private static TokenListParser<FilterToken, BinaryOperator> BinaryOperators { get; } =
-        AndOperator.Or(OrOperator);
+    private static TokenListParser<FilterToken, PropertyOperator> EqualOperator { get; } =
+        Token.EqualTo(FilterToken.Equal).Value(PropertyOperator.Equal);
+
+    private static TokenListParser<FilterToken, PropertyOperator> NotEqualOperator { get; } =
+        Token.EqualTo(FilterToken.NotEqual).Value(PropertyOperator.NotEqual);
+
+    private static TokenListParser<FilterToken, PropertyOperator> LessThanOperator { get; } =
+        Token.EqualTo(FilterToken.LessThan).Value(PropertyOperator.LessThan);
+
+    private static TokenListParser<FilterToken, PropertyOperator> LessThanOrEqualOperator { get; } =
+        Token.EqualTo(FilterToken.LessThanOrEqual).Value(PropertyOperator.LessThanOrEqual);
+
+    private static TokenListParser<FilterToken, PropertyOperator> GreaterThanOperator { get; } =
+        Token.EqualTo(FilterToken.GreaterThan).Value(PropertyOperator.GreaterThan);
+
+    private static TokenListParser<FilterToken, PropertyOperator> GreaterThanOrEqualOperator { get; } =
+        Token.EqualTo(FilterToken.GreaterThanOrEqual).Value(PropertyOperator.GreaterThanOrEqual);
+
+    private static TokenListParser<FilterToken, PropertyOperator> StartsWithOperator { get; } =
+        Token.EqualTo(FilterToken.StartsWith).Value(PropertyOperator.StartsWith);
+
+    private static TokenListParser<FilterToken, PropertyOperator> EndsWithOperator { get; } =
+        Token.EqualTo(FilterToken.EndsWith).Value(PropertyOperator.EndsWith);
+
+    private static TokenListParser<FilterToken, PropertyOperator> PropertyOperators { get; } =
+        EqualOperator
+            .Or(NotEqualOperator)
+            .Or(LessThanOperator)
+            .Or(LessThanOrEqualOperator)
+            .Or(GreaterThanOperator)
+            .Or(GreaterThanOrEqualOperator)
+            .Or(StartsWithOperator)
+            .Or(EndsWithOperator)
+            .Named("property operator");
+
+    private static TokenListParser<FilterToken, LogicalOperator> BinaryOperators { get; } =
+        AndOperator.Or(OrOperator).Named("binary operator");
 
     private static TokenListParser<FilterToken, object?> Value { get; } =
         String.AsNullable()
@@ -40,55 +75,54 @@ public static class FilterParser
             .Or(True.AsNullable())
             .Or(False.AsNullable())
             .Or(Null)
-            .Named("Filter value");
-    
+            .Named("value");
+
     private static TokenListParser<FilterToken, Filter> Predicate { get; } =
         from identifier in Token.EqualTo(FilterToken.Identifier)
-        from @operator in Token.EqualTo(FilterToken.Identifier)
-        from operand in Value
-        select GetFilter(identifier, @operator, operand);
+        from @operator in PropertyOperators
+        from value in Value
+        select GetFilter(identifier, @operator, value);
 
     private static readonly TokenListParser<FilterToken, Filter> Group =
         (from lparen in Token.EqualTo(FilterToken.LParen)
-            from expr in Parse.Ref(() => Expression!)
-            from rparen in Token.EqualTo(FilterToken.RParen)
-            select expr)
+         from expr in Parse.Ref(() => Expression!)
+         from rparen in Token.EqualTo(FilterToken.RParen)
+         select expr)
         .Or(Predicate);
 
     private static TokenListParser<FilterToken, Filter> Operand { get; } =
         (from @operator in Token.EqualToValue(FilterToken.Identifier, "not")
-            from predicate in Group
-            select Filter.Not(predicate))
+         from predicate in Group
+         select Filter.Not(predicate))
         .Or(Group)
-        .Named("Expression");
+        .Named("expression");
 
-    private static TokenListParser<FilterToken, Filter> Expression { get; } = Parse.Chain(BinaryOperators, Operand, MakeBinary);
+    private static TokenListParser<FilterToken, Filter> Expression { get; } = Parse.Chain(BinaryOperators, Operand, MakeLogicalOperator);
 
     public static TokenListParser<FilterToken, Filter> Instance { get; } = Expression.AtEnd();
 
-    private static Filter MakeBinary(BinaryOperator @operator, Filter left, Filter right) => @operator switch
+    private static Filter MakeLogicalOperator(LogicalOperator @operator, Filter left, Filter right) => @operator switch
     {
-        BinaryOperator.And => Filter.And(left, right),
-        BinaryOperator.Or => Filter.Or(left, right),
-        _ => throw new ArgumentOutOfRangeException(nameof(@operator), @operator, "Invalid operator."),
+        LogicalOperator.And => Filter.And(left, right),
+        LogicalOperator.Or => Filter.Or(left, right),
+        _ => throw new ArgumentOutOfRangeException(nameof(@operator), @operator, "Invalid logical operator."),
     };
 
-    private static Filter GetFilter(Token<FilterToken> nameToken, Token<FilterToken> operatorToken, object? value)
+    private static Filter GetFilter(Token<FilterToken> nameToken, PropertyOperator @operator, object? value)
     {
-        var @operator = operatorToken.ToStringValue();
         var name = nameToken.ToStringValue();
-        
+
         return @operator switch
         {
-            "eq" => GetEqualFilter(name, value),
-            "ne" => GetNotEqualFilter(name, value),
-            "lt" => new LessThanFilter(name, GetComparable(value)),
-            "le" => new LessThanOrEqualFilter(name, GetComparable(value)),
-            "gt" => new GreaterThanFilter(name, GetComparable(value)),
-            "ge" => new GreaterThanOrEqualFilter(name, GetComparable(value)),
-            "startsWith" => new StartsWithFilter(name, GetString(value)),
-            "endsWith" => new EndsWithFilter(name, GetString(value)),
-            _ => throw new ParseException($"Unknown operator: {@operator}", operatorToken.Position),
+            PropertyOperator.Equal => GetEqualFilter(name, value),
+            PropertyOperator.NotEqual => GetNotEqualFilter(name, value),
+            PropertyOperator.LessThan => Filter.LessThan(name, GetComparable(value)),
+            PropertyOperator.LessThanOrEqual => Filter.LessThanOrEqual(name, GetComparable(value)),
+            PropertyOperator.GreaterThan => Filter.GreaterThan(name, GetComparable(value)),
+            PropertyOperator.GreaterThanOrEqual => Filter.GreaterThanOrEqual(name, GetComparable(value)),
+            PropertyOperator.StartsWith => Filter.StartsWith(name, GetString(value)),
+            PropertyOperator.EndsWith => Filter.EndsWith(name, GetString(value)),
+            _ => throw new ArgumentOutOfRangeException(nameof(@operator), @operator, "Invalid property operator."),
         };
     }
 
@@ -105,10 +139,10 @@ public static class FilterParser
         _ => throw new ParseException($"Value {value} is not supported.")
     };
 
-    private static Filter GetEqualFilter(string name, object? value) => 
+    private static Filter GetEqualFilter(string name, object? value) =>
         CreateFilter(typeof(EqualFilter<>), name, value);
 
-    private static Filter GetNotEqualFilter(string name, object? value) => 
+    private static Filter GetNotEqualFilter(string name, object? value) =>
         CreateFilter(typeof(NotEqualFilter<>), name, value);
 
     private static Filter CreateFilter(Type filterType, string name, object? value)

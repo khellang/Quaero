@@ -33,13 +33,13 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
     public Func<T, bool> VisitNotEqual<TValue>(NotEqualFilter<TValue> filter) =>
         VisitNot(new NotFilter(new EqualFilter<TValue>(filter.Name, filter.Value)));
 
-    public Func<T, bool> VisitStartsWith(StartsWithFilter filter) => 
+    public Func<T, bool> VisitStartsWith(StartsWithFilter filter) =>
         resource => VisitStringFilter(resource, filter, (x, y) => x.StartsWith(y, StringComparison.Ordinal));
 
-    public Func<T, bool> VisitEndsWith(EndsWithFilter filter) => 
+    public Func<T, bool> VisitEndsWith(EndsWithFilter filter) =>
         resource => VisitStringFilter(resource, filter, (x, y) => x.EndsWith(y, StringComparison.Ordinal));
 
-    public Func<T, bool> VisitGreaterThan(GreaterThanFilter filter) => 
+    public Func<T, bool> VisitGreaterThan(GreaterThanFilter filter) =>
         resource => VisitTypedFilter(resource, filter, (x, y) => x.CompareTo(y) > 0);
 
     public Func<T, bool> VisitGreaterThanOrEqual(GreaterThanOrEqualFilter filter) =>
@@ -56,9 +56,9 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
 
     protected abstract bool TryGetPropertyValue<TValue>(T resource, string name, out TValue value);
 
-    private bool VisitStringFilter(T resource, PropertyFilter<string?> filter, Func<string, string, bool> predicate) => 
+    private bool VisitStringFilter(T resource, PropertyFilter<string?> filter, Func<string, string, bool> predicate) =>
         VisitTypedFilter(resource, filter, (x, y) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y) && predicate(x!, y!));
 
-    private bool VisitTypedFilter<TValue>(T resource, PropertyFilter<TValue> filter, Func<TValue, TValue, bool> predicate) => 
+    private bool VisitTypedFilter<TValue>(T resource, PropertyFilter<TValue> filter, Func<TValue, TValue, bool> predicate) =>
         TryGetPropertyValue<TValue>(resource, filter.Name, out var value) && predicate(value, filter.Value);
 }

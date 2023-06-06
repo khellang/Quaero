@@ -7,7 +7,7 @@ public abstract class BinaryFilter : Filter
         Left = left ?? throw new ArgumentNullException(nameof(left));
         Right = right ?? throw new ArgumentNullException(nameof(right));
     }
-    
+
     public Filter Left { get; }
 
     public Filter Right { get; }

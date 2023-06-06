@@ -9,7 +9,7 @@ public sealed class NotFilter : Filter
 
     public Filter Inner { get; }
 
-    public override TState Accept<TResult, TState>(IFilterVisitor<TResult, TState> visitor, TState state) => 
+    public override TState Accept<TResult, TState>(IFilterVisitor<TResult, TState> visitor, TState state) =>
         visitor.VisitNot(this, state);
 
     public override TResult Accept<TResult>(IFilterVisitor<TResult> visitor) =>
