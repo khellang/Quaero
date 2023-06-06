@@ -29,6 +29,9 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
     {
         if (filter.Inner is EqualFilter<object> { Value: null } eq)
         {
+            // This handles the following cases
+            // - directReports ne null -> (directReports=*)
+            // - not(directReports eq null) -> (directReports=*)
             return VisitFilter(eq.Name, string.Empty, builder, prefix: "*");
         }
 
@@ -37,14 +40,16 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
 
     public override StringBuilder VisitEqual<T>(EqualFilter<T> filter, StringBuilder builder)
     {
-        if (filter.Value is not null)
+        if (filter.Value is null)
         {
-            return VisitPropertyFilter(filter, builder);
+            // This handles the following case:
+            // - manager eq null -> (!(manager=*))
+            builder = builder.Append("(!");
+            builder = VisitFilter(filter.Name, string.Empty, builder, prefix: "*");
+            return builder.Append(')');
         }
 
-        builder = builder.Append("(!");
-        builder = VisitFilter(filter.Name, string.Empty, builder, prefix: "*");
-        return builder.Append(')');
+        return VisitPropertyFilter(filter, builder);
 
     }
 
