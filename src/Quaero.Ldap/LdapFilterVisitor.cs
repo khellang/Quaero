@@ -74,6 +74,24 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
     public override StringBuilder VisitLessThanOrEqual(LessThanOrEqualFilter filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder, "<=");
 
+    private static StringBuilder VisitPropertyFilter<TValue>(PropertyFilter<TValue> filter, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "") =>
+        VisitFilter(filter.Name, filter.Value, builder, @operator, prefix, suffix);
+
+    private static StringBuilder VisitFilter<TValue>(string name, TValue value, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "")
+    {
+        builder = builder.Append('(').Append(name).Append(@operator);
+        if (!string.IsNullOrEmpty(prefix))
+        {
+            builder = builder.Append(prefix);
+        }
+        builder = builder.Append(FormatValue(value));
+        if (!string.IsNullOrEmpty(suffix))
+        {
+            builder = builder.Append(suffix);
+        }
+        return builder.Append(')');
+    }
+
     private static string FormatValue<TValue>(TValue? value) => value switch
     {
         true => "TRUE",
@@ -95,24 +113,6 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         }
 
         return builder.ToString();
-    }
-
-    private static StringBuilder VisitPropertyFilter<TValue>(PropertyFilter<TValue> filter, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "") =>
-        VisitFilter(filter.Name, filter.Value, builder, @operator, prefix, suffix);
-
-    private static StringBuilder VisitFilter<TValue>(string name, TValue value, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "")
-    {
-        builder = builder.Append('(').Append(name).Append(@operator);
-        if (!string.IsNullOrEmpty(prefix))
-        {
-            builder = builder.Append(prefix);
-        }
-        builder = builder.Append(FormatValue(value));
-        if (!string.IsNullOrEmpty(suffix))
-        {
-            builder = builder.Append(suffix);
-        }
-        return builder.Append(')');
     }
 
     private static StringBuilder VisitBinaryChain<TFilter>(LdapFilterVisitor visitor, TFilter filter, StringBuilder builder)
