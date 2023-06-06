@@ -8,6 +8,8 @@ internal enum FilterToken
 
     String,
 
+    Guid,
+
     Identifier,
 
     [Token(Example = "(")]

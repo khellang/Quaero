@@ -27,6 +27,12 @@ public static class FilterTextParsers
         from close in Character.EqualTo('\'')
         select new string(chars);
 
+    public static TextParser<Guid> Guid { get; } =
+        from open in Character.EqualTo('\'')
+        from content in Character.HexDigit.Or(Character.EqualTo('-')).Many()
+        from close in Character.EqualTo('\'')
+        select System.Guid.Parse(new string(content));
+
     public static TextParser<double> Number { get; } =
         from sign in Character.EqualTo('-').Value(-1.0).OptionalOrDefault(1.0)
         from whole in Numerics.Natural.Select(n => double.Parse(n.ToStringValue()))

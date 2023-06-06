@@ -8,8 +8,13 @@ internal static class FilterParser
 {
     private static TokenListParser<FilterToken, object> String { get; } =
         Token.EqualTo(FilterToken.String)
+            .Apply(FilterTextParsers.Guid)
+            .Select(g => (object)g);
+
+    private static TokenListParser<FilterToken, object> Guid { get; } =
+        Token.EqualTo(FilterToken.Guid)
             .Apply(FilterTextParsers.String)
-            .Select(s => (object)s);
+            .Select(s => (object)System.Guid.Parse(s));
 
     private static TokenListParser<FilterToken, object> Number { get; } =
         Token.EqualTo(FilterToken.Number)
@@ -71,6 +76,7 @@ internal static class FilterParser
 
     private static TokenListParser<FilterToken, object?> Value { get; } =
         String.AsNullable()
+            .Or(Guid.AsNullable())
             .Or(Number.AsNullable())
             .Or(True.AsNullable())
             .Or(False.AsNullable())

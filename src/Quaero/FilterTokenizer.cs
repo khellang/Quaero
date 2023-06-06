@@ -7,7 +7,7 @@ namespace Quaero;
 
 internal static class FilterTokenizer
 {
-    private static TextParser<Unit> FilterStringToken { get; } =
+    private static TextParser<Unit> String { get; } =
         from open in Character.EqualTo('\'')
         from content in Character.EqualTo('\\').IgnoreThen(Character.AnyChar).Value(Unit.Value).Try()
             .Or(Character.Except('\'').Value(Unit.Value))
@@ -15,7 +15,21 @@ internal static class FilterTokenizer
         from close in Character.EqualTo('\'')
         select Unit.Value;
 
-    private static TextParser<Unit> FilterNumberToken { get; } =
+    private static TextParser<Unit> Guid { get; } =
+        from open in Character.EqualTo('\'')
+        from content in Character.HexDigit.Repeat(8)
+            .IgnoreThen(Character.EqualTo('-'))
+            .IgnoreThen(Character.HexDigit.Repeat(4))
+            .IgnoreThen(Character.EqualTo('-'))
+            .IgnoreThen(Character.HexDigit.Repeat(4))
+            .IgnoreThen(Character.EqualTo('-'))
+            .IgnoreThen(Character.HexDigit.Repeat(4))
+            .IgnoreThen(Character.EqualTo('-'))
+            .IgnoreThen(Character.HexDigit.Repeat(12))
+        from close in Character.EqualTo('\'')
+        select Unit.Value;
+
+    private static TextParser<Unit> Number { get; } =
         from sign in Character.EqualTo('-').OptionalOrDefault()
         from first in Character.Digit
         from rest in Character.Digit.Or(Character.In('.', 'e', 'E', '+', '-')).IgnoreMany()
@@ -26,8 +40,9 @@ internal static class FilterTokenizer
             .Ignore(Span.WhiteSpace)
             .Match(Character.EqualTo('('), FilterToken.LParen)
             .Match(Character.EqualTo(')'), FilterToken.RParen)
-            .Match(FilterStringToken, FilterToken.String, requireDelimiters: true)
-            .Match(FilterNumberToken, FilterToken.Number, requireDelimiters: true)
+            .Match(Guid, FilterToken.Guid, requireDelimiters: true)
+            .Match(String, FilterToken.String, requireDelimiters: true)
+            .Match(Number, FilterToken.Number, requireDelimiters: true)
             .Match(Identifier.CStyle, FilterToken.Identifier, requireDelimiters: true)
             .Build();
 }
