@@ -10,4 +10,8 @@
       <ProjectReference Include="..\Quaero.MicrosoftGraph\Quaero.MicrosoftGraph.csproj" />
       <ProjectReference Include="..\Quaero\Quaero.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Spectre.Console" Version="0.47.0" />
+    </ItemGroup>
 </Project>

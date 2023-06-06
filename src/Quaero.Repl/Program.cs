@@ -1,19 +1,36 @@
 ﻿using Quaero;
+using Spectre.Console;
+using Superpower;
 
-Console.Write("query> ");
+const string prompt = "query> ";
+
+Console.Write(prompt);
 var line = Console.ReadLine();
 
 while (line != null)
 {
     if (!string.IsNullOrEmpty(line))
     {
-        var filter = Filter.Parse(line).Optimize();
+        try
+        {
+            var filter = Filter.Parse(line).Optimize();
 
-        Console.WriteLine($"Graph: {filter.ToMicrosoftGraphQuery()}");
-        Console.WriteLine($"LDAP: {filter.ToLdapQuery()}");
+            AnsiConsole.MarkupLineInterpolated($"Graph: [blue]{filter.ToMicrosoftGraphQuery()}[/]");
+            AnsiConsole.MarkupLineInterpolated($"LDAP: [purple]{filter.ToLdapQuery()}[/]");
+        }
+        catch (ParseException e)
+        {
+            Console.Write(new string(' ', prompt.Length + e.ErrorPosition.Column - 1));
+            AnsiConsole.MarkupLine("[red]↑[/]");
+            AnsiConsole.MarkupLineInterpolated($"[red]{e.Message}[/]");
+        }
+        catch (Exception e)
+        {
+            AnsiConsole.MarkupLineInterpolated($"[red]{e.Message}[/]");
+        }
     }
 
     Console.WriteLine();
-    Console.Write("query> ");
+    Console.Write(prompt);
     line = Console.ReadLine();
 }
