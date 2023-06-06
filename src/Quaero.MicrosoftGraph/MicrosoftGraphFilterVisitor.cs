@@ -5,7 +5,7 @@ namespace Quaero.MicrosoftGraph;
 
 public sealed class MicrosoftGraphFilterVisitor : StringFilterVisitor
 {
-    public static readonly IFilterVisitor<string, StringBuilder> Instance = new MicrosoftGraphFilterVisitor();
+    private static readonly IFilterVisitor<string, StringBuilder> Instance = new MicrosoftGraphFilterVisitor();
 
     private MicrosoftGraphFilterVisitor() { }
 

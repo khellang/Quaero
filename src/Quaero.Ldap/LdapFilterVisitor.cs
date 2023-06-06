@@ -5,7 +5,7 @@ namespace Quaero.Ldap;
 
 public sealed class LdapFilterVisitor : StringFilterVisitor
 {
-    public static readonly IFilterVisitor<string, StringBuilder> Instance = new LdapFilterVisitor();
+    private static readonly IFilterVisitor<string, StringBuilder> Instance = new LdapFilterVisitor();
 
     private LdapFilterVisitor() { }
 
