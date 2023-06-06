@@ -24,17 +24,9 @@ internal static class FilterTokenizer
     public static Tokenizer<FilterToken> Instance { get; } =
         new TokenizerBuilder<FilterToken>()
             .Ignore(Span.WhiteSpace)
-            .Match(Span.EqualToIgnoreCase("eq"), FilterToken.Equal, requireDelimiters: true)
-            .Match(Span.EqualToIgnoreCase("ne"), FilterToken.NotEqual, requireDelimiters: true)
-            .Match(Span.EqualToIgnoreCase("lt"), FilterToken.LessThan, requireDelimiters: true)
-            .Match(Span.EqualToIgnoreCase("le"), FilterToken.LessThanOrEqual, requireDelimiters: true)
-            .Match(Span.EqualToIgnoreCase("gt"), FilterToken.GreaterThan, requireDelimiters: true)
-            .Match(Span.EqualToIgnoreCase("ge"), FilterToken.GreaterThanOrEqual, requireDelimiters: true)
-            .Match(Span.EqualToIgnoreCase("startsWith"), FilterToken.StartsWith, requireDelimiters: true)
-            .Match(Span.EqualToIgnoreCase("endsWith"), FilterToken.EndsWith, requireDelimiters: true)
             .Match(Character.EqualTo('('), FilterToken.LParen)
             .Match(Character.EqualTo(')'), FilterToken.RParen)
-            .Match(FilterStringToken, FilterToken.String)
+            .Match(FilterStringToken, FilterToken.String, requireDelimiters: true)
             .Match(FilterNumberToken, FilterToken.Number, requireDelimiters: true)
             .Match(Identifier.CStyle, FilterToken.Identifier, requireDelimiters: true)
             .Build();

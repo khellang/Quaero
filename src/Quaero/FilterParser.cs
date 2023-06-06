@@ -32,28 +32,28 @@ internal static class FilterParser
         Token.EqualToValueIgnoreCase(FilterToken.Identifier, "or").Value(LogicalOperator.Or);
 
     private static TokenListParser<FilterToken, PropertyOperator> EqualOperator { get; } =
-        Token.EqualTo(FilterToken.Equal).Value(PropertyOperator.Equal);
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "eq").Value(PropertyOperator.Equal);
 
     private static TokenListParser<FilterToken, PropertyOperator> NotEqualOperator { get; } =
-        Token.EqualTo(FilterToken.NotEqual).Value(PropertyOperator.NotEqual);
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "ne").Value(PropertyOperator.NotEqual);
 
     private static TokenListParser<FilterToken, PropertyOperator> LessThanOperator { get; } =
-        Token.EqualTo(FilterToken.LessThan).Value(PropertyOperator.LessThan);
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "lt").Value(PropertyOperator.LessThan);
 
     private static TokenListParser<FilterToken, PropertyOperator> LessThanOrEqualOperator { get; } =
-        Token.EqualTo(FilterToken.LessThanOrEqual).Value(PropertyOperator.LessThanOrEqual);
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "le").Value(PropertyOperator.LessThanOrEqual);
 
     private static TokenListParser<FilterToken, PropertyOperator> GreaterThanOperator { get; } =
-        Token.EqualTo(FilterToken.GreaterThan).Value(PropertyOperator.GreaterThan);
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "gt").Value(PropertyOperator.GreaterThan);
 
     private static TokenListParser<FilterToken, PropertyOperator> GreaterThanOrEqualOperator { get; } =
-        Token.EqualTo(FilterToken.GreaterThanOrEqual).Value(PropertyOperator.GreaterThanOrEqual);
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "ge").Value(PropertyOperator.GreaterThanOrEqual);
 
     private static TokenListParser<FilterToken, PropertyOperator> StartsWithOperator { get; } =
-        Token.EqualTo(FilterToken.StartsWith).Value(PropertyOperator.StartsWith);
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "startsWith").Value(PropertyOperator.StartsWith);
 
     private static TokenListParser<FilterToken, PropertyOperator> EndsWithOperator { get; } =
-        Token.EqualTo(FilterToken.EndsWith).Value(PropertyOperator.EndsWith);
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "endsWith").Value(PropertyOperator.EndsWith);
 
     private static TokenListParser<FilterToken, PropertyOperator> PropertyOperators { get; } =
         EqualOperator
@@ -91,7 +91,7 @@ internal static class FilterParser
         .Or(Predicate);
 
     private static TokenListParser<FilterToken, Filter> Operand { get; } =
-        (from @operator in Token.EqualToValue(FilterToken.Identifier, "not")
+        (from @operator in Token.EqualToValueIgnoreCase(FilterToken.Identifier, "not")
          from predicate in Group
          select Filter.Not(predicate))
         .Or(Group)
