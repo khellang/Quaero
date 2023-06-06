@@ -3,7 +3,7 @@ using Superpower.Parsers;
 
 namespace Quaero;
 
-public static class FilterTextParsers
+internal static class FilterTextParsers
 {
     public static TextParser<string> String { get; } =
         from open in Character.EqualTo('\'')
