@@ -8,13 +8,13 @@ internal static class FilterParser
 {
     private static TokenListParser<FilterToken, object> String { get; } =
         Token.EqualTo(FilterToken.String)
-            .Apply(FilterTextParsers.Guid)
+            .Apply(FilterTextParsers.String)
             .Select(g => (object)g);
 
     private static TokenListParser<FilterToken, object> Guid { get; } =
         Token.EqualTo(FilterToken.Guid)
-            .Apply(FilterTextParsers.String)
-            .Select(s => (object)System.Guid.Parse(s));
+            .Apply(FilterTextParsers.Guid)
+            .Select(s => (object)s);
 
     private static TokenListParser<FilterToken, object> Number { get; } =
         Token.EqualTo(FilterToken.Number)
