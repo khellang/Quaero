@@ -73,10 +73,24 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
     {
         true => "TRUE",
         false => "FALSE",
-        Guid guid => BitConverter.ToString(guid.ToByteArray()),
+        Guid guid => Format(guid),
         string str => LdapEncoder.FilterEncode(str),
         _ => value?.ToString() ?? "NULL"
     };
+
+    private static string Format(Guid guid) => Format(guid.ToByteArray());
+
+    private static string Format(byte[] bytes)
+    {
+        var builder = new StringBuilder(capacity: bytes.Length * 3);
+
+        for (var index = 0; index < bytes.Length; index++)
+        {
+            builder.Append('\\').Append(bytes[index].ToString("X2"));
+        }
+
+        return builder.ToString();
+    }
 
     private static StringBuilder VisitPropertyFilter<TValue>(PropertyFilter<TValue> filter, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "") =>
         VisitFilter(filter.Name, filter.Value, builder, @operator, prefix, suffix);
