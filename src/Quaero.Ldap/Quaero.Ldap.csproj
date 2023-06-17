@@ -4,10 +4,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Quaero\Quaero.csproj" />
+        <ProjectReference Include="..\Quaero\Quaero.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AntiLdapInjection" Version="1.1.4" />
+        <PackageReference Include="AntiLdapInjection" Version="1.1.4"/>
+        <PackageReference Include="PolySharp" Version="1.13.2">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 </Project>
