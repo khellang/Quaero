@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using AntiLdapInjection;
 
@@ -50,7 +51,6 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         }
 
         return VisitPropertyFilter(filter, builder);
-
     }
 
     public override StringBuilder VisitNotEqual<T>(NotEqualFilter<T> filter, StringBuilder builder) =>
@@ -94,12 +94,19 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
 
     private static string FormatValue<TValue>(TValue? value) => value switch
     {
+        null => "NULL",
         true => "TRUE",
         false => "FALSE",
         Guid guid => Format(guid),
         string str => LdapEncoder.FilterEncode(str),
+        DateTime dateTime => Format(dateTime.ToUniversalTime()),
+        DateTimeOffset dateTimeOffset => Format(dateTimeOffset),
+        IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
         _ => value?.ToString() ?? "NULL"
     };
+
+    private static string Format(DateTimeOffset dateTimeOffset) =>
+        dateTimeOffset.ToFileTime().ToString(CultureInfo.InvariantCulture);
 
     private static string Format(Guid guid) => Format(guid.ToByteArray());
 

@@ -58,6 +58,7 @@ public sealed class MicrosoftGraphFilterVisitor : StringFilterVisitor
         null => "null",
         true => "true",
         false => "false",
+        Guid guid => $"'{guid}'",
         string str => $"'{Escape(str)}'",
         DateTime dateTime => dateTime.ToString("O"),
         DateTimeOffset dateTimeOffset => dateTimeOffset.ToString("O"),
