@@ -23,10 +23,10 @@ public abstract class StringFilterVisitorTestBase
     public Task NotEqualFilter() => Verify(Convert(NotEqual("disabled", true)));
 
     [Fact]
-    public Task GreaterThanFilter() => Verify(Convert(GreaterThan("date", new DateTime(2023, 01, 01))));
+    public Task GreaterThanFilter() => Verify(Convert(GreaterThan("date", DateTime.SpecifyKind(new DateTime(2023, 01, 01), DateTimeKind.Utc))));
 
     [Fact]
-    public Task GreaterThanOrEqualFilter() => Verify(Convert(GreaterThanOrEqual("date", new DateTime(2023, 01, 01))));
+    public Task GreaterThanOrEqualFilter() => Verify(Convert(GreaterThanOrEqual("date", DateTime.SpecifyKind(new DateTime(2023, 01, 01), DateTimeKind.Utc))));
 
     [Fact]
     public Task LessThanFilter() => Verify(Convert(LessThan("age", 69.5)));
