@@ -1,0 +1,1 @@
+﻿((startsWith(name, 'John') and endsWith(name, 'Doe')) and age ge 42)

@@ -96,6 +96,7 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
 
     private static string? FormatValue<TValue>(TValue? value) => value switch
     {
+        null => "NULL",
         true => "TRUE",
         false => "FALSE",
         Guid guid => Format(guid),
@@ -103,7 +104,7 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         DateTime dateTime => Format(dateTime.ToUniversalTime()),
         DateTimeOffset dateTimeOffset => Format(dateTimeOffset),
         IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
-        _ => value?.ToString(),
+        _ => value.ToString() ?? "NULL",
     };
 
     private static string Format(DateTimeOffset dateTimeOffset) =>

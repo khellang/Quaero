@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
-        <OutputType>Exe</OutputType>
         <RootNamespace>Quaero.Testing</RootNamespace>
+        <IsPackable>false</IsPackable>
+        <OutputType>Exe</OutputType>
     </PropertyGroup>
 
     <ItemGroup>
