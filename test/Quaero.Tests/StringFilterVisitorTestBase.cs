@@ -50,6 +50,9 @@ public abstract class StringFilterVisitorTestBase
     public Task NotFilter() => Verify(Convert(Not(StartsWith("name", "John"))));
 
     [Fact]
+    public Task InFilter() => Verify(Convert(In("department", "Retail", "Sales")));
+
+    [Fact]
     public Task NullToString() => Verify(Convert(Equal("nullString", new ObjectWithNullReturningToString())));
 
     private string Convert(Filter filter) => ToString(filter.Optimize());

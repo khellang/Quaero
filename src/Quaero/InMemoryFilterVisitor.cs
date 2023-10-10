@@ -51,6 +51,9 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
     public Func<T, bool> VisitLessThanOrEqual(LessThanOrEqualFilter filter) =>
         resource => VisitTypedFilter(resource, filter, (x, y) => x.CompareTo(y) <= 0);
 
+    public Func<T, bool> VisitIn<TValue>(InFilter<TValue> filter) =>
+        resource => TryGetPropertyValue<TValue>(resource, filter.Name, out var value) && filter.Value.Contains(value);
+
     public Func<T, bool> VisitEqual<TValue>(EqualFilter<TValue> filter) =>
         resource => VisitTypedFilter(resource, filter, (left, right) => EqualityComparer<TValue>.Default.Equals(left!, right!));
 

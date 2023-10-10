@@ -44,6 +44,9 @@ public sealed class MicrosoftGraphFilterVisitor : StringFilterVisitor
     public override StringBuilder VisitLessThanOrEqual(LessThanOrEqualFilter filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "le");
 
+    public override StringBuilder VisitIn<T>(InFilter<T> filter, StringBuilder builder) =>
+        InfixOperator(filter, builder, "in");
+
     private StringBuilder VisitBinary(BinaryFilter filter, StringBuilder builder, string @operator) =>
         builder.Append('(').Append(this, filter.Left).Append(' ').Append(@operator).Append(' ').Append(this, filter.Right).Append(')');
 
@@ -63,6 +66,7 @@ public sealed class MicrosoftGraphFilterVisitor : StringFilterVisitor
         DateTime dateTime => dateTime.ToString("O"),
         DateTimeOffset dateTimeOffset => dateTimeOffset.ToString("O"),
         IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
+        IEnumerable<object> values => $"({string.Join(", ", values.Select(FormatValue))})",
         _ => value.ToString() ?? "null"
     };
 

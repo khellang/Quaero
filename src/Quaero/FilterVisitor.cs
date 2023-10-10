@@ -25,4 +25,6 @@ public abstract class FilterVisitor : IFilterVisitor<Filter>
     public virtual Filter VisitLessThan(LessThanFilter filter) => filter;
 
     public virtual Filter VisitLessThanOrEqual(LessThanOrEqualFilter filter) => filter;
+
+    public virtual Filter VisitIn<T>(InFilter<T> filter) => filter;
 }

@@ -74,6 +74,14 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
     public override StringBuilder VisitLessThanOrEqual(LessThanOrEqualFilter filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder, "<=");
 
+    public override StringBuilder VisitIn<T>(InFilter<T> filter, StringBuilder builder)
+    {
+        builder = builder.Append("(|");
+        builder = filter.Value.Aggregate(builder, (current, value) =>
+            VisitEqual(new EqualFilter<T>(filter.Name, value), current));
+        return builder.Append(')');
+    }
+
     private static StringBuilder VisitPropertyFilter<TValue>(PropertyFilter<TValue> filter, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "") =>
         VisitFilter(filter.Name, filter.Value, builder, @operator, prefix, suffix);
 

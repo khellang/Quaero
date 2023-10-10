@@ -1,0 +1,1 @@
+﻿department in ('Retail', 'Sales')

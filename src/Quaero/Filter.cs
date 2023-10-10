@@ -1,3 +1,4 @@
+using System.Globalization;
 using Superpower;
 
 namespace Quaero;
@@ -7,6 +8,8 @@ public abstract class Filter
     public static Filter Equal<T>(string name, T? value) => new EqualFilter<T>(name, value);
 
     public static Filter NotEqual<T>(string name, T? value) => new NotEqualFilter<T>(name, value);
+
+    public static Filter In<T>(string name, params T[] values) => new InFilter<T>(name, values);
 
     public static Filter StartsWith(string name, string? value) => new StartsWithFilter(name, value);
 
@@ -43,4 +46,18 @@ public abstract class Filter
     public abstract TResult Accept<TResult>(IFilterVisitor<TResult> visitor);
 
     public abstract override string ToString();
+
+    protected static string FormatValue<TValue>(TValue value) => value switch {
+        null => "null",
+        true => "true",
+        false => "false",
+        string str => $"'{Escape(str)}'",
+        DateTime dateTime => dateTime.ToString("O"),
+        DateTimeOffset dateTimeOffset => dateTimeOffset.ToString("O"),
+        IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
+        IEnumerable<object> values => $"({string.Join(", ", values.Select(FormatValue))})",
+        _ => value.ToString() ?? "null"
+    };
+
+    private static string Escape(string value) => value.Replace("'", "''");
 }

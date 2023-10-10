@@ -30,6 +30,8 @@ public interface IFilterVisitor<out TResult, TState>
     TState VisitLessThan(LessThanFilter filter, TState state);
 
     TState VisitLessThanOrEqual(LessThanOrEqualFilter filter, TState state);
+
+    TState VisitIn<T>(InFilter<T> filter, TState state);
 }
 
 /// <summary>
@@ -61,4 +63,6 @@ public interface IFilterVisitor<out TResult>
     TResult VisitLessThan(LessThanFilter filter);
 
     TResult VisitLessThanOrEqual(LessThanOrEqualFilter filter);
+
+    TResult VisitIn<T>(InFilter<T> filter);
 }

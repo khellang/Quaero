@@ -32,4 +32,6 @@ public abstract class StringFilterVisitor : IFilterVisitor<string, StringBuilder
     public abstract StringBuilder VisitLessThan(LessThanFilter filter, StringBuilder builder);
 
     public abstract StringBuilder VisitLessThanOrEqual(LessThanOrEqualFilter filter, StringBuilder builder);
+
+    public abstract StringBuilder VisitIn<T>(InFilter<T> filter, StringBuilder state);
 }
