@@ -1,1 +1,1 @@
-﻿not(startsWith(name, 'John'))
+﻿not(startsWith(name, 'Jack'))

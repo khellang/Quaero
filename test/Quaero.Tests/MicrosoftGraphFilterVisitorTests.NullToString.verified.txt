@@ -1,1 +1,1 @@
-﻿nullString eq null
+﻿nullString ne null

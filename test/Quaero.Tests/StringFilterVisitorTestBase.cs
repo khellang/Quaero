@@ -3,7 +3,7 @@ namespace Quaero.Tests;
 [UsesVerify]
 public abstract class StringFilterVisitorTestBase : FilterVisitorTestBase
 {
-    protected override Task Assert(Filter filter)
+    protected override Task AssertFilter(Filter filter)
     {
         var settingsTask = Verify(ToString(filter.Optimize()));
 

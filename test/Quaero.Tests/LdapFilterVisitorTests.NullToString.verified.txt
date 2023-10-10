@@ -1,1 +1,1 @@
-﻿(nullString=NULL)
+﻿(!(nullString=NULL))
