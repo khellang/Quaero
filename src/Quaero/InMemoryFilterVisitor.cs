@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+
 namespace Quaero;
 
 /// <summary>
@@ -6,9 +9,9 @@ namespace Quaero;
 /// </summary>
 public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
 {
-    private InMemoryFilterVisitor() { }
+    public static readonly InMemoryFilterVisitor<T> ReflectionBased = new ReflectionBasedInMemoryFilterVisitor();
 
-    public abstract Func<T, bool> Visit(Filter filter);
+    public Func<T, bool> Visit(Filter filter) => filter.Accept(this);
 
     public Func<T, bool> VisitAnd(AndFilter filter)
     {
@@ -57,11 +60,37 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
     public Func<T, bool> VisitEqual<TValue>(EqualFilter<TValue> filter) =>
         resource => VisitTypedFilter(resource, filter, (left, right) => EqualityComparer<TValue>.Default.Equals(left!, right!));
 
-    protected abstract bool TryGetPropertyValue<TValue>(T resource, string name, out TValue value);
+    protected abstract bool TryGetPropertyValue<TValue>(T resource, string name, [NotNullWhen(true)] out TValue? value);
 
     private bool VisitStringFilter(T resource, PropertyFilter<string?> filter, Func<string, string, bool> predicate) =>
         VisitTypedFilter(resource, filter, (x, y) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y) && predicate(x!, y!));
 
     private bool VisitTypedFilter<TValue>(T resource, PropertyFilter<TValue> filter, Func<TValue, TValue, bool> predicate) =>
         TryGetPropertyValue<TValue>(resource, filter.Name, out var value) && predicate(value, filter.Value);
+
+    private class ReflectionBasedInMemoryFilterVisitor : InMemoryFilterVisitor<T>
+    {
+        protected override bool TryGetPropertyValue<TValue>(T resource, string name, [NotNullWhen(true)] out TValue? value)
+            where TValue : default
+        {
+            if (PropertyCache.Properties.TryGetValue(name, out var property) && property.CanRead)
+            {
+                value = (TValue)property.GetValue(resource);
+                return true;
+            }
+
+            value = default;
+            return false;
+        }
+    }
+
+    private static class PropertyCache
+    {
+        // ReSharper disable once StaticMemberInGenericType
+        public static readonly Dictionary<string, PropertyInfo> Properties = GetProperties();
+
+        private static Dictionary<string, PropertyInfo> GetProperties() =>
+            typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
+    }
 }

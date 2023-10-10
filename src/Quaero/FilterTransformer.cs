@@ -1,6 +1,6 @@
 namespace Quaero;
 
-public abstract class FilterVisitor : IFilterVisitor<Filter>
+public abstract class FilterTransformer : IFilterVisitor<Filter>
 {
     public virtual Filter Visit(Filter filter) => filter.Accept(this);
 

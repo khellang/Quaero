@@ -1,6 +1,6 @@
 namespace Quaero;
 
-internal sealed class FilterOptimizer : FilterVisitor
+internal sealed class FilterOptimizer : FilterTransformer
 {
     public static readonly IFilterVisitor<Filter> Instance = new FilterOptimizer();
 
