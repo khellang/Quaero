@@ -3,13 +3,37 @@ using Superpower;
 
 namespace Quaero;
 
+/// <summary>
+/// The base class for all filter expressions.
+/// </summary>
 public abstract class Filter
 {
+    /// <summary>
+    /// Convenience method to construct an <see name="EqualFilter{T}"/>.
+    /// </summary>
+    /// <param name="name">The name of the property to check for equality.</param>
+    /// <param name="value">The value to check for equality.</param>
+    /// <typeparam name="T">The type of the property to check for equality.</typeparam>
+    /// <returns>An <see cref="EqualFilter{T}"/> with the specified <paramref name="name"/> and <paramref name="value"/>.</returns>
     public static Filter Equal<T>(string name, T? value) => new EqualFilter<T>(name, value);
 
+    /// <summary>
+    /// Convenience method to construct a <see name="NotEqualFilter{T}"/>.
+    /// </summary>
+    /// <param name="name">The name of the property to check for inequality.</param>
+    /// <param name="value">The value to check for inequality.</param>
+    /// <typeparam name="T">The type of the property to check for inequality.</typeparam>
+    /// <returns>A <see cref="NotEqualFilter{T}"/> with the specified <paramref name="name"/> and <paramref name="value"/>.</returns>
     public static Filter NotEqual<T>(string name, T? value) => new NotEqualFilter<T>(name, value);
 
-    public static Filter In<T>(string name, params T[] values) => new InFilter<T>(name, values);
+    /// <summary>
+    /// Convenience method to construct a <see name="InFilter{T}"/>.
+    /// </summary>
+    /// <param name="name">The name of the property to check for inequality.</param>
+    /// <param name="values">The values to check for equality.</param>
+    /// <typeparam name="T">The type of the property to check for inequality.</typeparam>
+    /// <returns>A <see cref="InFilter{T}"/> with the specified <paramref name="name"/> and <paramref name="values"/>.</returns>
+    public static Filter In<T>(string name, params T[] values) => new InFilter<T>(name, new HashSet<T>(values));
 
     public static Filter StartsWith(string name, string? value) => new StartsWithFilter(name, value);
 
@@ -33,6 +57,10 @@ public abstract class Filter
 
     public Filter Or(Filter other) => Or(this, other);
 
+    /// <summary>
+    /// Negates the filter.
+    /// </summary>
+    /// <returns>A negated version of the filter.</returns>
     public virtual Filter Negate() => Not(this);
 
     public static Filter Parse(string filter)
@@ -45,8 +73,18 @@ public abstract class Filter
 
     public abstract TResult Accept<TResult>(IFilterVisitor<TResult> visitor);
 
+    /// <summary>
+    /// Converts the filter to a <see cref="string"/>.
+    /// </summary>
+    /// <returns>A formatted <see cref="string"/>, representing the filter expression.</returns>
     public abstract override string ToString();
 
+    /// <summary>
+    /// Formats the specified <paramref name="value"/> into a <see cref="string"/>.
+    /// </summary>
+    /// <param name="value">The value to format.</param>
+    /// <typeparam name="TValue">The type of value to format.</typeparam>
+    /// <returns>A formatted <see cref="string"/>, representing the <paramref name="value"/>.</returns>
     protected static string FormatValue<TValue>(TValue value) => value switch {
         null => "null",
         true => "true",

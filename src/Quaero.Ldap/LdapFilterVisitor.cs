@@ -4,14 +4,19 @@ using AntiLdapInjection;
 
 namespace Quaero.Ldap;
 
+/// <summary>
+/// A visitor for converting filter expressions into LDAP query strings.
+/// </summary>
 public sealed class LdapFilterVisitor : StringFilterVisitor
 {
-    private static readonly IFilterVisitor<string, StringBuilder> Instance = new LdapFilterVisitor();
+    /// <summary>
+    /// A singleton instance of the <see cref="LdapFilterVisitor"/>.
+    /// </summary>
+    public static readonly IFilterVisitor<string, StringBuilder> Instance = new LdapFilterVisitor();
 
     private LdapFilterVisitor() { }
 
-    public static string Transform(Filter filter) => Instance.Visit(filter);
-
+    /// <inheritdoc />
     public override StringBuilder VisitAnd(AndFilter filter, StringBuilder builder)
     {
         builder = builder.Append("(&");
@@ -19,6 +24,7 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         return builder.Append(')');
     }
 
+    /// <inheritdoc />
     public override StringBuilder VisitOr(OrFilter filter, StringBuilder builder)
     {
         builder = builder.Append("(|");
@@ -26,9 +32,10 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         return builder.Append(')');
     }
 
+    /// <inheritdoc />
     public override StringBuilder VisitNot(NotFilter filter, StringBuilder builder)
     {
-        if (filter.Inner is EqualFilter<object> { Value: null } eq)
+        if (filter.Operand is EqualFilter<object> { Value: null } eq)
         {
             // This handles the following cases
             // - directReports ne null -> (directReports=*)
@@ -36,9 +43,10 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
             return VisitFilter(eq.Name, string.Empty, builder, prefix: "*");
         }
 
-        return builder.Append("(!").Append(this, filter.Inner).Append(')');
+        return builder.Append("(!").Append(this, filter.Operand).Append(')');
     }
 
+    /// <inheritdoc />
     public override StringBuilder VisitEqual<T>(EqualFilter<T> filter, StringBuilder builder)
     {
         if (filter.Value is null)
@@ -53,27 +61,35 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         return VisitPropertyFilter(filter, builder);
     }
 
+    /// <inheritdoc />
     public override StringBuilder VisitNotEqual<T>(NotEqualFilter<T> filter, StringBuilder builder) =>
         VisitNot(new NotFilter(Filter.Equal(filter.Name, filter.Value)), builder);
 
+    /// <inheritdoc />
     public override StringBuilder VisitStartsWith(StartsWithFilter filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder, suffix: "*");
 
+    /// <inheritdoc />
     public override StringBuilder VisitEndsWith(EndsWithFilter filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder, prefix: "*");
 
+    /// <inheritdoc />
     public override StringBuilder VisitGreaterThan(GreaterThanFilter filter, StringBuilder builder) =>
         VisitNot(new NotFilter(filter.Negate()), builder);
 
+    /// <inheritdoc />
     public override StringBuilder VisitGreaterThanOrEqual(GreaterThanOrEqualFilter filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder, ">=");
 
+    /// <inheritdoc />
     public override StringBuilder VisitLessThan(LessThanFilter filter, StringBuilder builder) =>
         VisitNot(new NotFilter(filter.Negate()), builder);
 
+    /// <inheritdoc />
     public override StringBuilder VisitLessThanOrEqual(LessThanOrEqualFilter filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder, "<=");
 
+    /// <inheritdoc />
     public override StringBuilder VisitIn<T>(InFilter<T> filter, StringBuilder builder)
     {
         builder = builder.Append("(|");

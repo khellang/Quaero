@@ -2,7 +2,7 @@ namespace Quaero;
 
 public class InFilter<T> : PropertyFilter<ISet<T>>
 {
-    public InFilter(string name, IEnumerable<T> values) : base(name, new HashSet<T>(values)) { }
+    public InFilter(string name, HashSet<T> values) : base(name, values) { }
 
     public override TState Accept<TResult, TState>(IFilterVisitor<TResult, TState> visitor, TState state) =>
         visitor.VisitIn(this, state);

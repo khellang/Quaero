@@ -9,6 +9,9 @@ namespace Quaero;
 /// </summary>
 public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
 {
+    /// <summary>
+    ///
+    /// </summary>
     public static readonly InMemoryFilterVisitor<T> ReflectionBased = new ReflectionBasedInMemoryFilterVisitor();
 
     public Func<T, bool> Visit(Filter filter) => filter.Accept(this);
@@ -29,7 +32,7 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
 
     public Func<T, bool> VisitNot(NotFilter filter)
     {
-        var inner = filter.Inner.Accept(this);
+        var inner = filter.Operand.Accept(this);
         return resource => !inner(resource);
     }
 
@@ -55,18 +58,28 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
         resource => VisitTypedFilter(resource, filter, (x, y) => x.CompareTo(y) <= 0);
 
     public Func<T, bool> VisitIn<TValue>(InFilter<TValue> filter) =>
-        resource => TryGetPropertyValue<TValue>(resource, filter.Name, out var value) && filter.Value.Contains(value);
+        resource => filter.Value.Contains(GetPropertyValue<TValue>(resource, filter.Name));
 
     public Func<T, bool> VisitEqual<TValue>(EqualFilter<TValue> filter) =>
         resource => VisitTypedFilter(resource, filter, (left, right) => EqualityComparer<TValue>.Default.Equals(left!, right!));
 
     protected abstract bool TryGetPropertyValue<TValue>(T resource, string name, [NotNullWhen(true)] out TValue? value);
 
+    private TValue GetPropertyValue<TValue>(T resource, string name)
+    {
+        if (TryGetPropertyValue<TValue>(resource, name, out var value))
+        {
+            return value;
+        }
+
+        throw new MissingMemberException(typeof(T).FullName, name);
+    }
+
     private bool VisitStringFilter(T resource, PropertyFilter<string?> filter, Func<string, string, bool> predicate) =>
         VisitTypedFilter(resource, filter, (x, y) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y) && predicate(x!, y!));
 
     private bool VisitTypedFilter<TValue>(T resource, PropertyFilter<TValue> filter, Func<TValue, TValue, bool> predicate) =>
-        TryGetPropertyValue<TValue>(resource, filter.Name, out var value) && predicate(value, filter.Value);
+        predicate(GetPropertyValue<TValue>(resource, filter.Name), filter.Value);
 
     private class ReflectionBasedInMemoryFilterVisitor : InMemoryFilterVisitor<T>
     {

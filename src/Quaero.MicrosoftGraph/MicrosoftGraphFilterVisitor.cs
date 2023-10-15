@@ -3,47 +3,63 @@ using System.Text;
 
 namespace Quaero.MicrosoftGraph;
 
+/// <summary>
+/// A visitor for converting filter expressions into Microsoft Graph query strings.
+/// </summary>
 public sealed class MicrosoftGraphFilterVisitor : StringFilterVisitor
 {
-    private static readonly IFilterVisitor<string, StringBuilder> Instance = new MicrosoftGraphFilterVisitor();
+    /// <summary>
+    /// A singleton instance of the <see cref="MicrosoftGraphFilterVisitor"/>.
+    /// </summary>
+    public static readonly IFilterVisitor<string, StringBuilder> Instance = new MicrosoftGraphFilterVisitor();
 
     private MicrosoftGraphFilterVisitor() { }
 
-    public static string Transform(Filter filter) => Instance.Visit(filter);
-
+    /// <inheritdoc />
     public override StringBuilder VisitAnd(AndFilter filter, StringBuilder builder) =>
         VisitBinary(filter, builder, "and");
 
+    /// <inheritdoc />
     public override StringBuilder VisitOr(OrFilter filter, StringBuilder builder) =>
         VisitBinary(filter, builder, "or");
 
+    /// <inheritdoc />
     public override StringBuilder VisitNot(NotFilter filter, StringBuilder builder) =>
-        builder.Append("not(").Append(this, filter.Inner).Append(')');
+        builder.Append("not(").Append(this, filter.Operand).Append(')');
 
+    /// <inheritdoc />
     public override StringBuilder VisitEqual<TValue>(EqualFilter<TValue> filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "eq");
 
+    /// <inheritdoc />
     public override StringBuilder VisitNotEqual<TValue>(NotEqualFilter<TValue> filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "ne");
 
+    /// <inheritdoc />
     public override StringBuilder VisitStartsWith(StartsWithFilter filter, StringBuilder builder) =>
         PrefixOperator(filter, builder, "startsWith");
 
+    /// <inheritdoc />
     public override StringBuilder VisitEndsWith(EndsWithFilter filter, StringBuilder builder) =>
         PrefixOperator(filter, builder, "endsWith");
 
+    /// <inheritdoc />
     public override StringBuilder VisitGreaterThan(GreaterThanFilter filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "gt");
 
+    /// <inheritdoc />
     public override StringBuilder VisitGreaterThanOrEqual(GreaterThanOrEqualFilter filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "ge");
 
+    /// <inheritdoc />
     public override StringBuilder VisitLessThan(LessThanFilter filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "lt");
 
+    /// <inheritdoc />
     public override StringBuilder VisitLessThanOrEqual(LessThanOrEqualFilter filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "le");
 
+    /// <inheritdoc />
     public override StringBuilder VisitIn<T>(InFilter<T> filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "in");
 
