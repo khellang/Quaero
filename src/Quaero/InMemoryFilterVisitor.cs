@@ -10,12 +10,14 @@ namespace Quaero;
 public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
 {
     /// <summary>
-    ///
+    /// A singleton instance of a reflection-based in-memory filter visitor.
     /// </summary>
     public static readonly InMemoryFilterVisitor<T> ReflectionBased = new ReflectionBasedInMemoryFilterVisitor();
 
+    /// <inheritdoc />
     public Func<T, bool> Visit(Filter filter) => filter.Accept(this);
 
+    /// <inheritdoc />
     public Func<T, bool> VisitAnd(AndFilter filter)
     {
         var left = filter.Left.Accept(this);
@@ -23,6 +25,7 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
         return resource => left(resource) && right(resource);
     }
 
+    /// <inheritdoc />
     public Func<T, bool> VisitOr(OrFilter filter)
     {
         var left = filter.Left.Accept(this);
@@ -30,69 +33,83 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
         return resource => left(resource) || right(resource);
     }
 
+    /// <inheritdoc />
     public Func<T, bool> VisitNot(NotFilter filter)
     {
         var inner = filter.Operand.Accept(this);
         return resource => !inner(resource);
     }
 
+    /// <inheritdoc />
     public Func<T, bool> VisitNotEqual<TValue>(NotEqualFilter<TValue> filter) =>
         VisitNot(new NotFilter(new EqualFilter<TValue>(filter.Name, filter.Value)));
 
+    /// <inheritdoc />
     public Func<T, bool> VisitStartsWith(StartsWithFilter filter) =>
-        resource => VisitStringFilter(resource, filter, (x, y) => x.StartsWith(y, StringComparison.Ordinal));
+        VisitStringFilter(filter, (x, y) => x.StartsWith(y, StringComparison.Ordinal));
 
+    /// <inheritdoc />
     public Func<T, bool> VisitEndsWith(EndsWithFilter filter) =>
-        resource => VisitStringFilter(resource, filter, (x, y) => x.EndsWith(y, StringComparison.Ordinal));
+        VisitStringFilter(filter, (x, y) => x.EndsWith(y, StringComparison.Ordinal));
 
+    /// <inheritdoc />
     public Func<T, bool> VisitGreaterThan(GreaterThanFilter filter) =>
-        resource => VisitTypedFilter(resource, filter, (x, y) => x.CompareTo(y) > 0);
+        VisitPropertyFilter(filter, (x, y) => x.CompareTo(y) > 0);
 
+    /// <inheritdoc />
     public Func<T, bool> VisitGreaterThanOrEqual(GreaterThanOrEqualFilter filter) =>
-        resource => VisitTypedFilter(resource, filter, (x, y) => x.CompareTo(y) >= 0);
+        VisitPropertyFilter(filter, (x, y) => x.CompareTo(y) >= 0);
 
+    /// <inheritdoc />
     public Func<T, bool> VisitLessThan(LessThanFilter filter) =>
-        resource => VisitTypedFilter(resource, filter, (x, y) => x.CompareTo(y) < 0);
+        VisitPropertyFilter(filter, (x, y) => x.CompareTo(y) < 0);
 
+    /// <inheritdoc />
     public Func<T, bool> VisitLessThanOrEqual(LessThanOrEqualFilter filter) =>
-        resource => VisitTypedFilter(resource, filter, (x, y) => x.CompareTo(y) <= 0);
+        VisitPropertyFilter(filter, (x, y) => x.CompareTo(y) <= 0);
 
-    public Func<T, bool> VisitIn<TValue>(InFilter<TValue> filter) =>
-        resource => filter.Value.Contains(GetPropertyValue<TValue>(resource, filter.Name));
-
-    public Func<T, bool> VisitEqual<TValue>(EqualFilter<TValue> filter) =>
-        resource => VisitTypedFilter(resource, filter, (left, right) => EqualityComparer<TValue>.Default.Equals(left!, right!));
-
-    protected abstract bool TryGetPropertyValue<TValue>(T resource, string name, [NotNullWhen(true)] out TValue? value);
-
-    private TValue GetPropertyValue<TValue>(T resource, string name)
+    /// <inheritdoc />
+    public Func<T, bool> VisitIn<TValue>(InFilter<TValue> filter)
     {
-        if (TryGetPropertyValue<TValue>(resource, name, out var value))
+        if (!TryGetPropertyAccessor<TValue>(filter.Name, out var getValue))
         {
-            return value;
+            throw new MissingMemberException(typeof(T).FullName, filter.Name);
         }
 
-        throw new MissingMemberException(typeof(T).FullName, name);
+        return resource => filter.Value.Contains(getValue(resource));
     }
 
-    private bool VisitStringFilter(T resource, PropertyFilter<string?> filter, Func<string, string, bool> predicate) =>
-        VisitTypedFilter(resource, filter, (x, y) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y) && predicate(x!, y!));
+    /// <inheritdoc />
+    public Func<T, bool> VisitEqual<TValue>(EqualFilter<TValue> filter) =>
+        VisitPropertyFilter(filter, (left, right) => EqualityComparer<TValue>.Default.Equals(left!, right!));
 
-    private bool VisitTypedFilter<TValue>(T resource, PropertyFilter<TValue> filter, Func<TValue, TValue, bool> predicate) =>
-        predicate(GetPropertyValue<TValue>(resource, filter.Name), filter.Value);
+    protected abstract bool TryGetPropertyAccessor<TValue>(string name, [NotNullWhen(true)] out Func<T, TValue>? accessor);
+
+    private Func<T, bool> VisitStringFilter(PropertyFilter<string?> filter, Func<string, string, bool> predicate) =>
+        VisitPropertyFilter(filter, (x, y) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y) && predicate(x!, y!));
+
+    private Func<T, bool> VisitPropertyFilter<TValue>(PropertyFilter<TValue> filter, Func<TValue, TValue, bool> predicate)
+    {
+        if (!TryGetPropertyAccessor<TValue>(filter.Name, out var getValue))
+        {
+            throw new MissingMemberException(typeof(T).FullName, filter.Name);
+        }
+
+        return resource => predicate(getValue(resource), filter.Value);
+    }
 
     private class ReflectionBasedInMemoryFilterVisitor : InMemoryFilterVisitor<T>
     {
-        protected override bool TryGetPropertyValue<TValue>(T resource, string name, [NotNullWhen(true)] out TValue? value)
+        protected override bool TryGetPropertyAccessor<TValue>(string name, [NotNullWhen(true)] out Func<T, TValue>? accessor)
             where TValue : default
         {
             if (PropertyCache.Properties.TryGetValue(name, out var property) && property.CanRead)
             {
-                value = (TValue)property.GetValue(resource);
+                accessor = resource => (TValue)property.GetValue(resource);
                 return true;
             }
 
-            value = default;
+            accessor = default;
             return false;
         }
     }

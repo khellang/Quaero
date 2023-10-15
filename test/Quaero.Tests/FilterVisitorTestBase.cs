@@ -19,7 +19,7 @@ public abstract class FilterVisitorTestBase
     }
 
     [Fact]
-    public Task NotEqualFilter() => AssertFilter(NotEqual("disabled", true));
+    public Task NotEqualFilter() => AssertFilter(NotEqual("enabled", false));
 
     [Fact]
     public Task GreaterThanFilter() => AssertFilter(GreaterThan("date", DateTime.SpecifyKind(new DateTime(2023, 01, 01), DateTimeKind.Utc)));
