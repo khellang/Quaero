@@ -146,21 +146,23 @@ internal static class FilterParser
     private static IComparable GetComparable(object? value) => value switch
     {
         IComparable comparable => comparable,
-        _ => throw new ParseException($"Value {value} is not supported.")
+        _ => throw new ParseException($"Value of type '{FormatType(value)}' is not supported. Expected a comparable value.")
     };
 
     private static string? GetString(object? value) => value switch
     {
         null => null,
         string str => str,
-        _ => throw new ParseException($"Value {value} is not supported.")
+        _ => throw new ParseException($"Value of type '{FormatType(value)}' is not supported. Expected a string.")
     };
 
     private static object[] GetList(object? value) => value switch
     {
         object[] list => list,
-        _ => throw new ParseException($"Value {value} is not supported.")
+        _ => throw new ParseException($"Value of type '{FormatType(value)}' is not supported. Expected a list.")
     };
+
+    private static string FormatType(object? value) => value?.GetType().ToString() ?? "null";
 
     private static Filter GetEqualFilter(string name, object? value) =>
         CreateFilter(typeof(EqualFilter<>), name, value);
