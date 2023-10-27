@@ -74,16 +74,80 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         VisitPropertyFilter(filter, builder, prefix: "*");
 
     /// <inheritdoc />
-    public override StringBuilder VisitGreaterThan<T>(GreaterThanFilter<T> filter, StringBuilder builder) =>
-        VisitNot(new NotFilter(filter.Negate()), builder);
+    public override StringBuilder VisitGreaterThan<T>(GreaterThanFilter<T> filter, StringBuilder builder)
+    {
+        if (filter.Value is byte @byte)
+        {
+            return VisitFilter(filter.Name, @byte + 1, builder, ">=");
+        }
+
+        if (filter.Value is short @short)
+        {
+            return VisitFilter(filter.Name, @short + 1, builder, ">=");
+        }
+
+        if (filter.Value is int @int)
+        {
+            return VisitFilter(filter.Name, @int + 1, builder, ">=");
+        }
+
+        if (filter.Value is long @long)
+        {
+            return VisitFilter(filter.Name, @long + 1, builder, ">=");
+        }
+
+        if (filter.Value is double @double)
+        {
+            return VisitFilter(filter.Name, @double + 1, builder, ">=");
+        }
+
+        if (filter.Value is float @float)
+        {
+            return VisitFilter(filter.Name, @float + 1, builder, ">=");
+        }
+
+        return VisitNot(new NotFilter(filter.Negate()), builder);
+    }
 
     /// <inheritdoc />
     public override StringBuilder VisitGreaterThanOrEqual<T>(GreaterThanOrEqualFilter<T> filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder, ">=");
 
     /// <inheritdoc />
-    public override StringBuilder VisitLessThan<T>(LessThanFilter<T> filter, StringBuilder builder) =>
-        VisitNot(new NotFilter(filter.Negate()), builder);
+    public override StringBuilder VisitLessThan<T>(LessThanFilter<T> filter, StringBuilder builder)
+    {
+        if (filter.Value is byte @byte)
+        {
+            return VisitFilter(filter.Name, @byte - 1, builder, "<=");
+        }
+
+        if (filter.Value is short @short)
+        {
+            return VisitFilter(filter.Name, @short - 1, builder, "<=");
+        }
+
+        if (filter.Value is int @int)
+        {
+            return VisitFilter(filter.Name, @int - 1, builder, "<=");
+        }
+
+        if (filter.Value is long @long)
+        {
+            return VisitFilter(filter.Name, @long - 1, builder, "<=");
+        }
+
+        if (filter.Value is double @double)
+        {
+            return VisitFilter(filter.Name, @double - 1, builder, "<=");
+        }
+
+        if (filter.Value is float @float)
+        {
+            return VisitFilter(filter.Name, @float - 1, builder, "<=");
+        }
+
+        return VisitNot(new NotFilter(filter.Negate()), builder);
+    }
 
     /// <inheritdoc />
     public override StringBuilder VisitLessThanOrEqual<T>(LessThanOrEqualFilter<T> filter, StringBuilder builder) =>
