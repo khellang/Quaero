@@ -39,13 +39,17 @@ public abstract class Filter
 
     public static Filter EndsWith(string name, string? value) => new EndsWithFilter(name, value);
 
-    public static Filter GreaterThan(string name, IComparable value) => new GreaterThanFilter(name, value);
+    public static Filter GreaterThan<T>(string name, T value) where T : IComparable<T> =>
+        new GreaterThanFilter<T>(name, value);
 
-    public static Filter GreaterThanOrEqual(string name, IComparable value) => new GreaterThanOrEqualFilter(name, value);
+    public static Filter GreaterThanOrEqual<T>(string name, T value) where T : IComparable<T> =>
+        new GreaterThanOrEqualFilter<T>(name, value);
 
-    public static Filter LessThan(string name, IComparable value) => new LessThanFilter(name, value);
+    public static Filter LessThan<T>(string name, T value) where T : IComparable<T> =>
+        new LessThanFilter<T>(name, value);
 
-    public static Filter LessThanOrEqual(string name, IComparable value) => new LessThanOrEqualFilter(name, value);
+    public static Filter LessThanOrEqual<T>(string name, T value) where T : IComparable<T> =>
+        new LessThanOrEqualFilter<T>(name, value);
 
     public static Filter Not(Filter filter) => new NotFilter(filter);
 

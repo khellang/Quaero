@@ -37,16 +37,20 @@ public abstract class StringFilterVisitor : IFilterVisitor<string, StringBuilder
     public abstract StringBuilder VisitEndsWith(EndsWithFilter filter, StringBuilder builder);
 
     /// <inheritdoc />
-    public abstract StringBuilder VisitGreaterThan(GreaterThanFilter filter, StringBuilder builder);
+    public abstract StringBuilder VisitGreaterThan<T>(GreaterThanFilter<T> filter, StringBuilder builder)
+        where T : IComparable<T>;
 
     /// <inheritdoc />
-    public abstract StringBuilder VisitGreaterThanOrEqual(GreaterThanOrEqualFilter filter, StringBuilder builder);
+    public abstract StringBuilder VisitGreaterThanOrEqual<T>(GreaterThanOrEqualFilter<T> filter, StringBuilder builder)
+        where T : IComparable<T>;
 
     /// <inheritdoc />
-    public abstract StringBuilder VisitLessThan(LessThanFilter filter, StringBuilder builder);
+    public abstract StringBuilder VisitLessThan<T>(LessThanFilter<T> filter, StringBuilder builder)
+        where T : IComparable<T>;
 
     /// <inheritdoc />
-    public abstract StringBuilder VisitLessThanOrEqual(LessThanOrEqualFilter filter, StringBuilder builder);
+    public abstract StringBuilder VisitLessThanOrEqual<T>(LessThanOrEqualFilter<T> filter, StringBuilder builder)
+        where T : IComparable<T>;
 
     /// <inheritdoc />
     public abstract StringBuilder VisitIn<T>(InFilter<T> filter, StringBuilder state);

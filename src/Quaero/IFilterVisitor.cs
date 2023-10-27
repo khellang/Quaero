@@ -73,36 +73,36 @@ public interface IFilterVisitor<out TResult, TState>
     TState VisitEndsWith(EndsWithFilter filter, TState state);
 
     /// <summary>
-    /// Visits a <see cref="GreaterThanFilter"/>.
+    /// Visits a <see cref="GreaterThanFilter{T}"/>.
     /// </summary>
     /// <param name="filter">The filter being visited.</param>
     /// <param name="state">The current state.</param>
     /// <returns>The result of the visit.</returns>
-    TState VisitGreaterThan(GreaterThanFilter filter, TState state);
+    TState VisitGreaterThan<T>(GreaterThanFilter<T> filter, TState state) where T : IComparable<T>;
 
     /// <summary>
-    /// Visits a <see cref="GreaterThanOrEqualFilter"/>.
+    /// Visits a <see cref="GreaterThanOrEqualFilter{T}"/>.
     /// </summary>
     /// <param name="filter">The filter being visited.</param>
     /// <param name="state">The current state.</param>
     /// <returns>The result of the visit.</returns>
-    TState VisitGreaterThanOrEqual(GreaterThanOrEqualFilter filter, TState state);
+    TState VisitGreaterThanOrEqual<T>(GreaterThanOrEqualFilter<T> filter, TState state) where T : IComparable<T>;
 
     /// <summary>
-    /// Visits a <see cref="LessThanFilter"/>.
+    /// Visits a <see cref="LessThanFilter{T}"/>.
     /// </summary>
     /// <param name="filter">The filter being visited.</param>
     /// <param name="state">The current state.</param>
     /// <returns>The result of the visit.</returns>
-    TState VisitLessThan(LessThanFilter filter, TState state);
+    TState VisitLessThan<T>(LessThanFilter<T> filter, TState state) where T : IComparable<T>;
 
     /// <summary>
-    /// Visits a <see cref="LessThanOrEqualFilter"/>.
+    /// Visits a <see cref="LessThanOrEqualFilter{T}"/>.
     /// </summary>
     /// <param name="filter">The filter being visited.</param>
     /// <param name="state">The current state.</param>
     /// <returns>The result of the visit.</returns>
-    TState VisitLessThanOrEqual(LessThanOrEqualFilter filter, TState state);
+    TState VisitLessThanOrEqual<T>(LessThanOrEqualFilter<T> filter, TState state) where T : IComparable<T>;
 
     /// <summary>
     /// Visits an <see cref="InFilter{T}"/>.
@@ -179,32 +179,32 @@ public interface IFilterVisitor<out TResult>
     TResult VisitEndsWith(EndsWithFilter filter);
 
     /// <summary>
-    /// Visits a <see cref="GreaterThanFilter"/>.
+    /// Visits a <see cref="GreaterThanFilter{T}"/>.
     /// </summary>
     /// <param name="filter">The filter being visited.</param>
     /// <returns>The result of the visit.</returns>
-    TResult VisitGreaterThan(GreaterThanFilter filter);
+    TResult VisitGreaterThan<T>(GreaterThanFilter<T> filter) where T : IComparable<T>;
 
     /// <summary>
-    /// Visits a <see cref="GreaterThanOrEqualFilter"/>.
+    /// Visits a <see cref="GreaterThanOrEqualFilter{T}"/>.
     /// </summary>
     /// <param name="filter">The filter being visited.</param>
     /// <returns>The result of the visit.</returns>
-    TResult VisitGreaterThanOrEqual(GreaterThanOrEqualFilter filter);
+    TResult VisitGreaterThanOrEqual<T>(GreaterThanOrEqualFilter<T> filter) where T : IComparable<T>;
 
     /// <summary>
-    /// Visits a <see cref="LessThanFilter"/>.
+    /// Visits a <see cref="LessThanFilter{T}"/>.
     /// </summary>
     /// <param name="filter">The filter being visited.</param>
     /// <returns>The result of the visit.</returns>
-    TResult VisitLessThan(LessThanFilter filter);
+    TResult VisitLessThan<T>(LessThanFilter<T> filter) where T : IComparable<T>;
 
     /// <summary>
-    /// Visits a <see cref="LessThanOrEqualFilter"/>.
+    /// Visits a <see cref="LessThanOrEqualFilter{T}"/>.
     /// </summary>
     /// <param name="filter">The filter being visited.</param>
     /// <returns>The result of the visit.</returns>
-    TResult VisitLessThanOrEqual(LessThanOrEqualFilter filter);
+    TResult VisitLessThanOrEqual<T>(LessThanOrEqualFilter<T> filter) where T : IComparable<T>;
 
     /// <summary>
     /// Visits an <see cref="InFilter{T}"/>.

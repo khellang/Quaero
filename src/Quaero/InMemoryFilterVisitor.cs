@@ -53,20 +53,24 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
         VisitStringFilter(filter, (x, y) => x.EndsWith(y, StringComparison.Ordinal));
 
     /// <inheritdoc />
-    public Func<T, bool> VisitGreaterThan(GreaterThanFilter filter) =>
-        VisitPropertyFilter(filter, (x, y) => x.CompareTo(y) > 0);
+    public Func<T, bool> VisitGreaterThan<TValue>(GreaterThanFilter<TValue> filter)
+        where TValue : IComparable<TValue> =>
+            VisitPropertyFilter(filter, (x, y) => x.CompareTo(y) > 0);
 
     /// <inheritdoc />
-    public Func<T, bool> VisitGreaterThanOrEqual(GreaterThanOrEqualFilter filter) =>
-        VisitPropertyFilter(filter, (x, y) => x.CompareTo(y) >= 0);
+    public Func<T, bool> VisitGreaterThanOrEqual<TValue>(GreaterThanOrEqualFilter<TValue> filter)
+        where TValue : IComparable<TValue> =>
+            VisitPropertyFilter(filter, (x, y) => x.CompareTo(y) >= 0);
 
     /// <inheritdoc />
-    public Func<T, bool> VisitLessThan(LessThanFilter filter) =>
-        VisitPropertyFilter(filter, (x, y) => x.CompareTo(y) < 0);
+    public Func<T, bool> VisitLessThan<TValue>(LessThanFilter<TValue> filter)
+        where TValue : IComparable<TValue> =>
+            VisitPropertyFilter(filter, (x, y) => x.CompareTo(y) < 0);
 
     /// <inheritdoc />
-    public Func<T, bool> VisitLessThanOrEqual(LessThanOrEqualFilter filter) =>
-        VisitPropertyFilter(filter, (x, y) => x.CompareTo(y) <= 0);
+    public Func<T, bool> VisitLessThanOrEqual<TValue>(LessThanOrEqualFilter<TValue> filter)
+        where TValue : IComparable<TValue> =>
+            VisitPropertyFilter(filter, (x, y) => x.CompareTo(y) <= 0);
 
     /// <inheritdoc />
     public Func<T, bool> VisitIn<TValue>(InFilter<TValue> filter) =>

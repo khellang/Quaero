@@ -44,19 +44,19 @@ public sealed class MicrosoftGraphFilterVisitor : StringFilterVisitor
         PrefixOperator(filter, builder, "endsWith");
 
     /// <inheritdoc />
-    public override StringBuilder VisitGreaterThan(GreaterThanFilter filter, StringBuilder builder) =>
+    public override StringBuilder VisitGreaterThan<T>(GreaterThanFilter<T> filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "gt");
 
     /// <inheritdoc />
-    public override StringBuilder VisitGreaterThanOrEqual(GreaterThanOrEqualFilter filter, StringBuilder builder) =>
+    public override StringBuilder VisitGreaterThanOrEqual<T>(GreaterThanOrEqualFilter<T> filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "ge");
 
     /// <inheritdoc />
-    public override StringBuilder VisitLessThan(LessThanFilter filter, StringBuilder builder) =>
+    public override StringBuilder VisitLessThan<T>(LessThanFilter<T> filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "lt");
 
     /// <inheritdoc />
-    public override StringBuilder VisitLessThanOrEqual(LessThanOrEqualFilter filter, StringBuilder builder) =>
+    public override StringBuilder VisitLessThanOrEqual<T>(LessThanOrEqualFilter<T> filter, StringBuilder builder) =>
         InfixOperator(filter, builder, "le");
 
     /// <inheritdoc />

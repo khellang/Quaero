@@ -128,12 +128,12 @@ internal static class FilterParser
 
         var filter = @operator switch
         {
-            PropertyOperator.Equal => GetEqualFilter(name, value),
-            PropertyOperator.NotEqual => GetNotEqualFilter(name, value),
-            PropertyOperator.LessThan => Filter.LessThan(name, GetComparable(value)),
-            PropertyOperator.LessThanOrEqual => Filter.LessThanOrEqual(name, GetComparable(value)),
-            PropertyOperator.GreaterThan => Filter.GreaterThan(name, GetComparable(value)),
-            PropertyOperator.GreaterThanOrEqual => Filter.GreaterThanOrEqual(name, GetComparable(value)),
+            PropertyOperator.Equal => CreateFilter(typeof(EqualFilter<>), name, value),
+            PropertyOperator.NotEqual => CreateFilter(typeof(NotEqualFilter<>), name, value),
+            PropertyOperator.LessThan => CreateFilter(typeof(LessThanFilter<>), name, value),
+            PropertyOperator.LessThanOrEqual => CreateFilter(typeof(LessThanOrEqualFilter<>), name, value),
+            PropertyOperator.GreaterThan => CreateFilter(typeof(GreaterThanFilter<>), name, value),
+            PropertyOperator.GreaterThanOrEqual => CreateFilter(typeof(GreaterThanOrEqualFilter<>), name, value),
             PropertyOperator.StartsWith => Filter.StartsWith(name, GetString(value)),
             PropertyOperator.EndsWith => Filter.EndsWith(name, GetString(value)),
             PropertyOperator.In => Filter.In(name, GetList(value)),
@@ -142,12 +142,6 @@ internal static class FilterParser
 
         return negated ? Filter.Not(filter) : filter;
     }
-
-    private static IComparable GetComparable(object? value) => value switch
-    {
-        IComparable comparable => comparable,
-        _ => throw new ParseException($"Value of type '{FormatType(value)}' is not supported. Expected a comparable value.")
-    };
 
     private static string? GetString(object? value) => value switch
     {
@@ -163,12 +157,6 @@ internal static class FilterParser
     };
 
     private static string FormatType(object? value) => value?.GetType().ToString() ?? "null";
-
-    private static Filter GetEqualFilter(string name, object? value) =>
-        CreateFilter(typeof(EqualFilter<>), name, value);
-
-    private static Filter GetNotEqualFilter(string name, object? value) =>
-        CreateFilter(typeof(NotEqualFilter<>), name, value);
 
     private static Filter CreateFilter(Type filterType, string name, object? value)
     {

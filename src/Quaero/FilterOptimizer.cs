@@ -21,27 +21,12 @@ internal sealed class FilterOptimizer : FilterTransformer
         }
 
         // not + gt -> le
-        if (operand is GreaterThanFilter gt)
-        {
-            return gt.Negate();
-        }
-
         // not + ge -> lt
-        if (operand is GreaterThanOrEqualFilter ge)
-        {
-            return ge.Negate();
-        }
-
         // not + lt -> ge
-        if (operand is LessThanFilter lt)
-        {
-            return lt.Negate();
-        }
-
         // not + le -> gt
-        if (operand is LessThanOrEqualFilter le)
+        if (IsComparisonFilter(operand))
         {
-            return le.Negate();
+            return operand.Negate();
         }
 
         // not + eq -> ne
@@ -62,6 +47,21 @@ internal sealed class FilterOptimizer : FilterTransformer
         }
 
         return base.VisitIn(filter);
+    }
+
+    private static bool IsComparisonFilter(Filter filter)
+    {
+        var type = filter.GetType();
+        if (!type.IsGenericType)
+        {
+            return false;
+        }
+
+        var typeDefinition = type.GetGenericTypeDefinition();
+        return typeDefinition == typeof(LessThanFilter<>)
+               ||typeDefinition == typeof(LessThanOrEqualFilter<>)
+               ||typeDefinition == typeof(GreaterThanFilter<>)
+               ||typeDefinition == typeof(GreaterThanOrEqualFilter<>);
     }
 
     private static bool IsEqualFilter(Filter filter)

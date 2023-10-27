@@ -74,19 +74,19 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         VisitPropertyFilter(filter, builder, prefix: "*");
 
     /// <inheritdoc />
-    public override StringBuilder VisitGreaterThan(GreaterThanFilter filter, StringBuilder builder) =>
+    public override StringBuilder VisitGreaterThan<T>(GreaterThanFilter<T> filter, StringBuilder builder) =>
         VisitNot(new NotFilter(filter.Negate()), builder);
 
     /// <inheritdoc />
-    public override StringBuilder VisitGreaterThanOrEqual(GreaterThanOrEqualFilter filter, StringBuilder builder) =>
+    public override StringBuilder VisitGreaterThanOrEqual<T>(GreaterThanOrEqualFilter<T> filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder, ">=");
 
     /// <inheritdoc />
-    public override StringBuilder VisitLessThan(LessThanFilter filter, StringBuilder builder) =>
+    public override StringBuilder VisitLessThan<T>(LessThanFilter<T> filter, StringBuilder builder) =>
         VisitNot(new NotFilter(filter.Negate()), builder);
 
     /// <inheritdoc />
-    public override StringBuilder VisitLessThanOrEqual(LessThanOrEqualFilter filter, StringBuilder builder) =>
+    public override StringBuilder VisitLessThanOrEqual<T>(LessThanOrEqualFilter<T> filter, StringBuilder builder) =>
         VisitPropertyFilter(filter, builder, "<=");
 
     /// <inheritdoc />
