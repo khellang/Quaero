@@ -79,7 +79,7 @@ internal static class FilterParser
         AndOperator.Or(OrOperator).Named("binary operator");
 
     private static TokenListParser<FilterToken, object> List { get; } =
-        Parse.Ref(() => Value)
+        Parse.Ref(() => Value!)
             .AtLeastOnceDelimitedBy(Token.EqualTo(FilterToken.Comma))
             .Between(Token.EqualTo(FilterToken.OpenParen), Token.EqualTo(FilterToken.CloseParen))
             .Select(x => (object)x);
