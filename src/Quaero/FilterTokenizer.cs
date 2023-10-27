@@ -38,8 +38,9 @@ internal static class FilterTokenizer
     public static Tokenizer<FilterToken> Instance { get; } =
         new TokenizerBuilder<FilterToken>()
             .Ignore(Span.WhiteSpace)
-            .Match(Character.EqualTo('('), FilterToken.LParen)
-            .Match(Character.EqualTo(')'), FilterToken.RParen)
+            .Match(Character.EqualTo('('), FilterToken.OpenParen)
+            .Match(Character.EqualTo(')'), FilterToken.CloseParen)
+            .Match(Character.EqualTo(','), FilterToken.Comma)
             .Match(Guid, FilterToken.Guid, requireDelimiters: true)
             .Match(String, FilterToken.String, requireDelimiters: true)
             .Match(Number, FilterToken.Number, requireDelimiters: true)

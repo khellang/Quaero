@@ -60,6 +60,9 @@ internal static class FilterParser
     private static TokenListParser<FilterToken, PropertyOperator> EndsWithOperator { get; } =
         Token.EqualToValueIgnoreCase(FilterToken.Identifier, "endsWith").Value(PropertyOperator.EndsWith);
 
+    private static TokenListParser<FilterToken, PropertyOperator> InOperator { get; } =
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "in").Value(PropertyOperator.In);
+
     private static TokenListParser<FilterToken, PropertyOperator> PropertyOperators { get; } =
         EqualOperator
             .Or(NotEqualOperator)
@@ -69,10 +72,17 @@ internal static class FilterParser
             .Or(GreaterThanOrEqualOperator)
             .Or(StartsWithOperator)
             .Or(EndsWithOperator)
+            .Or(InOperator)
             .Named("property operator");
 
     private static TokenListParser<FilterToken, LogicalOperator> BinaryOperators { get; } =
         AndOperator.Or(OrOperator).Named("binary operator");
+
+    private static TokenListParser<FilterToken, object> List { get; } =
+        Parse.Ref(() => Value)
+            .AtLeastOnceDelimitedBy(Token.EqualTo(FilterToken.Comma))
+            .Between(Token.EqualTo(FilterToken.OpenParen), Token.EqualTo(FilterToken.CloseParen))
+            .Select(x => (object)x);
 
     private static TokenListParser<FilterToken, object?> Value { get; } =
         String.AsNullable()
@@ -80,6 +90,7 @@ internal static class FilterParser
             .Or(Number.AsNullable())
             .Or(True.AsNullable())
             .Or(False.AsNullable())
+            .Or(List.AsNullable())
             .Or(Null)
             .Named("value");
 
@@ -90,9 +101,9 @@ internal static class FilterParser
         select GetFilter(identifier, @operator, value);
 
     private static readonly TokenListParser<FilterToken, Filter> Group =
-        (from lparen in Token.EqualTo(FilterToken.LParen)
+        (from lparen in Token.EqualTo(FilterToken.OpenParen)
          from expr in Parse.Ref(() => Expression!)
-         from rparen in Token.EqualTo(FilterToken.RParen)
+         from rparen in Token.EqualTo(FilterToken.CloseParen)
          select expr)
         .Or(Predicate);
 
@@ -128,6 +139,7 @@ internal static class FilterParser
             PropertyOperator.GreaterThanOrEqual => Filter.GreaterThanOrEqual(name, GetComparable(value)),
             PropertyOperator.StartsWith => Filter.StartsWith(name, GetString(value)),
             PropertyOperator.EndsWith => Filter.EndsWith(name, GetString(value)),
+            PropertyOperator.In => Filter.In(name, GetList(value)),
             _ => throw new ArgumentOutOfRangeException(nameof(@operator), @operator, "Invalid property operator."),
         };
     }
@@ -145,6 +157,12 @@ internal static class FilterParser
         _ => throw new ParseException($"Value {value} is not supported.")
     };
 
+    private static object[] GetList(object? value) => value switch
+    {
+        object[] list => list,
+        _ => throw new ParseException($"Value {value} is not supported.")
+    };
+
     private static Filter GetEqualFilter(string name, object? value) =>
         CreateFilter(typeof(EqualFilter<>), name, value);
 
@@ -155,5 +173,33 @@ internal static class FilterParser
     {
         var type = filterType.MakeGenericType(value?.GetType() ?? typeof(object));
         return (Filter)Activator.CreateInstance(type, name, value);
+    }
+
+    private enum LogicalOperator
+    {
+        And,
+
+        Or,
+    }
+
+    private enum PropertyOperator
+    {
+        Equal,
+
+        NotEqual,
+
+        LessThan,
+
+        LessThanOrEqual,
+
+        GreaterThan,
+
+        GreaterThanOrEqual,
+
+        StartsWith,
+
+        EndsWith,
+
+        In,
     }
 }

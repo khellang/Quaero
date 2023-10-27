@@ -13,8 +13,11 @@ internal enum FilterToken
     Identifier,
 
     [Token(Example = "(")]
-    LParen,
+    OpenParen,
 
     [Token(Example = ")")]
-    RParen,
+    CloseParen,
+
+    [Token(Example = ",")]
+    Comma,
 }
