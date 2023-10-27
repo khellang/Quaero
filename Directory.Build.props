@@ -21,10 +21,20 @@
 
         <PackageTags>query;language;ldap;microsoft;graph</PackageTags>
         <Authors>Kristian Hellang</Authors>
+
+        <PackageIcon>logo.png</PackageIcon>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
         <PackageReference Include="MinVer" Version="4.3.0" PrivateAssets="All" />
+        <PackageReference Include="PolySharp" Version="1.13.2">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="$(MSBuildThisFileDirectory)\logo.png" Pack="true" PackagePath="\" Visible="false" />
     </ItemGroup>
 </Project>

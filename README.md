@@ -1,0 +1,3 @@
+# Qaero
+
+A query language 

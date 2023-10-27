@@ -7,6 +7,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5379E65C-F71F-43DF-97D2-B76D317EA2FE}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
+		logo.png = logo.png
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quaero.MicrosoftGraph", "src\Quaero.MicrosoftGraph\Quaero.MicrosoftGraph.csproj", "{35A60F58-EE3C-4CF4-A9D3-B2BE70313489}"
