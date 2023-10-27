@@ -12,44 +12,56 @@ internal sealed class FilterOptimizer : FilterTransformer
 
     public override Filter VisitNot(NotFilter filter)
     {
+        var operand = Visit(filter.Operand);
+
         // not + not
-        if (filter.Operand is NotFilter not)
+        if (operand is NotFilter not)
         {
             return Visit(not.Operand);
         }
 
         // not + gt -> le
-        if (filter.Operand is GreaterThanFilter gt)
+        if (operand is GreaterThanFilter gt)
         {
             return gt.Negate();
         }
 
         // not + ge -> lt
-        if (filter.Operand is GreaterThanOrEqualFilter ge)
+        if (operand is GreaterThanOrEqualFilter ge)
         {
             return ge.Negate();
         }
 
         // not + lt -> ge
-        if (filter.Operand is LessThanFilter lt)
+        if (operand is LessThanFilter lt)
         {
             return lt.Negate();
         }
 
         // not + le -> gt
-        if (filter.Operand is LessThanOrEqualFilter le)
+        if (operand is LessThanOrEqualFilter le)
         {
             return le.Negate();
         }
 
         // not + eq -> ne
         // not + ne -> eq
-        if (IsEqualFilter(filter.Operand))
+        if (IsEqualFilter(operand))
         {
-            return filter.Operand.Negate();
+            return operand.Negate();
         }
 
-        return filter;
+        return Filter.Not(operand);
+    }
+
+    public override Filter VisitIn<T>(InFilter<T> filter)
+    {
+        if (filter.Value.Count == 1)
+        {
+            return VisitEqual(new EqualFilter<T>(filter.Name, filter.Value.First()));
+        }
+
+        return base.VisitIn(filter);
     }
 
     private static bool IsEqualFilter(Filter filter)
