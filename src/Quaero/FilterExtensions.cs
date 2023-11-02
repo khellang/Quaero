@@ -20,7 +20,7 @@ public static class FilterExtensions
     /// <param name="filter">The filter to convert.</param>
     /// <typeparam name="T">The type the predicate will operate on.</typeparam>
     /// <returns>An in-memory predicate based on the specified <paramref name="filter"/>.</returns>
-    public static Func<T, bool> ToReflectionBasedPredicate<T>(this Filter filter) =>
+    public static Func<T, bool> ToPredicate<T>(this Filter filter) =>
         filter.ToPredicate(InMemoryFilterVisitor<T>.ReflectionBased);
 
     /// <summary>

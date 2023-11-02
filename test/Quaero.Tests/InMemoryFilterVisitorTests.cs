@@ -4,7 +4,7 @@ public class InMemoryFilterVisitorTests : FilterVisitorTestBase
 {
     protected override Task AssertFilter(Filter filter)
     {
-        var predicate = filter.ToReflectionBasedPredicate<TestObject>();
+        var predicate = filter.ToPredicate<TestObject>();
 
         var testObject = new TestObject
         {
