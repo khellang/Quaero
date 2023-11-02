@@ -10,5 +10,5 @@ public class LdapFilterVisitorTests : StringFilterVisitorTestBase
     [Fact]
     public Task PresenceFilter() => AssertFilter(NotEqual("disabledDate", (object?)null));
 
-    protected override string ToString(Filter filter) => filter.ToLdapQuery();
+    protected override string ToString(Filter filter) => filter.ToLdapFilter();
 }

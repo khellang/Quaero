@@ -13,6 +13,6 @@ public static class FilterExtensions
     /// </summary>
     /// <param name="filter">The filter to convert.</param>
     /// <returns>An LDAP query string representing the specified <paramref name="filter"/>.</returns>
-    public static string ToLdapQuery(this Filter filter) =>
+    public static string ToLdapFilter(this Filter filter) =>
         LdapFilterVisitor.Instance.Visit(filter);
 }

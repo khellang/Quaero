@@ -15,8 +15,8 @@ while (line != null)
         {
             var filter = Filter.Parse(line).Optimize();
 
-            AnsiConsole.MarkupLineInterpolated($"Graph: [blue]{filter.ToMicrosoftGraphQuery()}[/]");
-            AnsiConsole.MarkupLineInterpolated($"LDAP: [purple]{filter.ToLdapQuery()}[/]");
+            AnsiConsole.MarkupLineInterpolated($"Graph: [blue]{filter.ToMicrosoftGraphFilter()}[/]");
+            AnsiConsole.MarkupLineInterpolated($"LDAP: [purple]{filter.ToLdapFilter()}[/]");
         }
         catch (ParseException e)
         {

@@ -13,6 +13,6 @@ public static class FilterExtensions
     /// </summary>
     /// <param name="filter">The filter to convert.</param>
     /// <returns>A Microsoft Graph query string representing the specified <paramref name="filter"/>.</returns>
-    public static string ToMicrosoftGraphQuery(this Filter filter) =>
+    public static string ToMicrosoftGraphFilter(this Filter filter) =>
         MicrosoftGraphFilterVisitor.Instance.Visit(filter);
 }
