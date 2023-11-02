@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Superpower;
 
@@ -67,10 +68,38 @@ public abstract class Filter
     /// <returns>A negated version of the filter.</returns>
     public virtual Filter Negate() => Not(this);
 
+    /// <summary>
+    /// Parses <paramref name="filter"/> into a <see cref="Filter"/> expression.
+    /// </summary>
+    /// <param name="filter">The filter string to parse.</param>
+    /// <returns>A parsed <see cref="Filter"/> expression.</returns>
     public static Filter Parse(string filter)
     {
         var tokens = FilterTokenizer.Instance.Tokenize(filter);
         return FilterParser.Instance.Parse(tokens);
+    }
+
+    /// <summary>
+    /// Attempts to parse <paramref name="filter"/> into a <see cref="Filter"/> expression.
+    /// </summary>
+    /// <param name="filter">The filter string to parse.</param>
+    /// <param name="result">A parsed <see cref="Filter"/> expression if successful.</param>
+    /// <returns><c>true</c> if the filter was successfully parsed, otherwise <c>false</c></returns>
+    public static bool TryParse(string filter, [NotNullWhen(true)] out Filter? result)
+    {
+        var tokens = FilterTokenizer.Instance.TryTokenize(filter);
+        if (tokens.HasValue)
+        {
+            var parseResult = FilterParser.Instance.TryParse(tokens.Value);
+            if (parseResult.HasValue)
+            {
+                result = parseResult.Value;
+                return true;
+            }
+        }
+
+        result = default;
+        return false;
     }
 
     public abstract TState Accept<TResult, TState>(IFilterVisitor<TResult, TState> visitor, TState state);
