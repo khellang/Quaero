@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\Quaero\Quaero.csproj"/>
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Quaero\Quaero.csproj"/>
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="AntiLdapInjection" Version="1.1.4"/>
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AntiLdapInjection" Version="1.1.4"/>
+  </ItemGroup>
 </Project>
