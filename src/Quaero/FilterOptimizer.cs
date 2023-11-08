@@ -6,38 +6,13 @@ internal sealed class FilterOptimizer : FilterTransformer
 
     private FilterOptimizer() { }
 
+    public override Filter Visit(Filter filter) => base.Visit(NormalizeNot(filter));
+
     public override Filter VisitAnd(AndFilter filter) => Filter.And(Visit(filter.Left), Visit(filter.Right));
 
     public override Filter VisitOr(OrFilter filter) => Filter.Or(Visit(filter.Left), Visit(filter.Right));
 
-    public override Filter VisitNot(NotFilter filter)
-    {
-        var operand = Visit(filter.Operand);
-
-        // not + not
-        if (operand is NotFilter not)
-        {
-            return Visit(not.Operand);
-        }
-
-        // not + gt -> le
-        // not + ge -> lt
-        // not + lt -> ge
-        // not + le -> gt
-        if (IsComparisonFilter(operand))
-        {
-            return operand.Negate();
-        }
-
-        // not + eq -> ne
-        // not + ne -> eq
-        if (IsEqualFilter(operand))
-        {
-            return operand.Negate();
-        }
-
-        return Filter.Not(operand);
-    }
+    public override Filter VisitNot(NotFilter filter) => Filter.Not(Visit(filter.Operand));
 
     public override Filter VisitIn<T>(InFilter<T> filter)
     {
@@ -49,31 +24,23 @@ internal sealed class FilterOptimizer : FilterTransformer
         return base.VisitIn(filter);
     }
 
-    private static bool IsComparisonFilter(Filter filter)
+    private static Filter NormalizeNot(Filter filter)
     {
-        var type = filter.GetType();
-        if (!type.IsGenericType)
+        if (filter is AndFilter and)
         {
-            return false;
+            return new AndFilter(NormalizeNot(and.Left), NormalizeNot(and.Right));
         }
 
-        var typeDefinition = type.GetGenericTypeDefinition();
-        return typeDefinition == typeof(LessThanFilter<>)
-               ||typeDefinition == typeof(LessThanOrEqualFilter<>)
-               ||typeDefinition == typeof(GreaterThanFilter<>)
-               ||typeDefinition == typeof(GreaterThanOrEqualFilter<>);
-    }
-
-    private static bool IsEqualFilter(Filter filter)
-    {
-        var type = filter.GetType();
-        if (!type.IsGenericType)
+        if (filter is OrFilter or)
         {
-            return false;
+            return new OrFilter(NormalizeNot(or.Left), NormalizeNot(or.Right));
         }
 
-        var typeDefinition = type.GetGenericTypeDefinition();
-        return typeDefinition == typeof(EqualFilter<>)
-               ||typeDefinition == typeof(NotEqualFilter<>);
+        if (filter is NotFilter not)
+        {
+            return NormalizeNot(not.Operand).Negate();
+        }
+
+        return filter;
     }
 }
