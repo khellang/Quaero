@@ -1,6 +1,8 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quaero", "src\Quaero\Quaero.csproj", "{3BAF5682-9461-4DC5-80CD-8E8325938DCC}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34202.233
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quaero", "src\Quaero\Quaero.csproj", "{3BAF5682-9461-4DC5-80CD-8E8325938DCC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{95F5D25B-36E8-4B05-B6D5-C102A5200E26}"
 EndProject
@@ -11,19 +13,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quaero.MicrosoftGraph", "src\Quaero.MicrosoftGraph\Quaero.MicrosoftGraph.csproj", "{35A60F58-EE3C-4CF4-A9D3-B2BE70313489}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quaero.MicrosoftGraph", "src\Quaero.MicrosoftGraph\Quaero.MicrosoftGraph.csproj", "{35A60F58-EE3C-4CF4-A9D3-B2BE70313489}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quaero.Ldap", "src\Quaero.Ldap\Quaero.Ldap.csproj", "{F2425417-82B8-441F-9E8E-C676758C6A2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quaero.Ldap", "src\Quaero.Ldap\Quaero.Ldap.csproj", "{F2425417-82B8-441F-9E8E-C676758C6A2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quaero.Repl", "src\Quaero.Repl\Quaero.Repl.csproj", "{F3634635-8A95-4D4E-A49B-9743E330F6D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quaero.Repl", "src\Quaero.Repl\Quaero.Repl.csproj", "{F3634635-8A95-4D4E-A49B-9743E330F6D5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{AC8A01F8-AB73-46F0-BDFC-A1E0DE18D11F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quaero.Tests", "test\Quaero.Tests\Quaero.Tests.csproj", "{FA2AF106-CC02-44BB-BD31-A07300FB5E17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quaero.Tests", "test\Quaero.Tests\Quaero.Tests.csproj", "{FA2AF106-CC02-44BB-BD31-A07300FB5E17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quaero.Ldap.Tests", "test\Quaero.Ldap.Tests\Quaero.Ldap.Tests.csproj", "{9B8B3452-D93D-42D0-A813-8E480D066C70}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quaero.Ldap.Tests", "test\Quaero.Ldap.Tests\Quaero.Ldap.Tests.csproj", "{9B8B3452-D93D-42D0-A813-8E480D066C70}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qaero.MicrosoftGraph.Tests", "test\Qaero.MicrosoftGraph.Tests\Qaero.MicrosoftGraph.Tests.csproj", "{A10FAD76-89C7-41FD-8378-EE64C632B1DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quaero.MicrosoftGraph.Tests", "test\Quaero.MicrosoftGraph.Tests\Quaero.MicrosoftGraph.Tests.csproj", "{8619D5E1-5A18-46B6-9B8A-DEBD3079AD2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,10 +57,13 @@ Global
 		{9B8B3452-D93D-42D0-A813-8E480D066C70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B8B3452-D93D-42D0-A813-8E480D066C70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B8B3452-D93D-42D0-A813-8E480D066C70}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A10FAD76-89C7-41FD-8378-EE64C632B1DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A10FAD76-89C7-41FD-8378-EE64C632B1DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A10FAD76-89C7-41FD-8378-EE64C632B1DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A10FAD76-89C7-41FD-8378-EE64C632B1DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8619D5E1-5A18-46B6-9B8A-DEBD3079AD2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8619D5E1-5A18-46B6-9B8A-DEBD3079AD2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8619D5E1-5A18-46B6-9B8A-DEBD3079AD2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8619D5E1-5A18-46B6-9B8A-DEBD3079AD2C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3BAF5682-9461-4DC5-80CD-8E8325938DCC} = {95F5D25B-36E8-4B05-B6D5-C102A5200E26}
@@ -67,6 +72,9 @@ Global
 		{F3634635-8A95-4D4E-A49B-9743E330F6D5} = {95F5D25B-36E8-4B05-B6D5-C102A5200E26}
 		{FA2AF106-CC02-44BB-BD31-A07300FB5E17} = {AC8A01F8-AB73-46F0-BDFC-A1E0DE18D11F}
 		{9B8B3452-D93D-42D0-A813-8E480D066C70} = {AC8A01F8-AB73-46F0-BDFC-A1E0DE18D11F}
-		{A10FAD76-89C7-41FD-8378-EE64C632B1DB} = {AC8A01F8-AB73-46F0-BDFC-A1E0DE18D11F}
+		{8619D5E1-5A18-46B6-9B8A-DEBD3079AD2C} = {AC8A01F8-AB73-46F0-BDFC-A1E0DE18D11F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E695BB40-1568-4F65-9326-694FF35EC0C8}
 	EndGlobalSection
 EndGlobal
