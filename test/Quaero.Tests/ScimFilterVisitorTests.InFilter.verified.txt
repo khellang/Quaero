@@ -1,0 +1,1 @@
+﻿(department eq "Retail" or department eq "Sales")

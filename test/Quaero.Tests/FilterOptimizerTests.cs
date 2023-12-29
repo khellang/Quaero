@@ -17,6 +17,13 @@
         }
 
         [Fact]
+        public void ShouldNormalizeNegatedNotEqual()
+        {
+            var filter = Not(NotEqual("test", 42)).Optimize();
+            Assert.Equal(Equal("test", 42), filter);
+        }
+
+        [Fact]
         public void ShouldNormalizeComparisonOperators()
         {
             var filter = Not(GreaterThan("test", 42)).Optimize();

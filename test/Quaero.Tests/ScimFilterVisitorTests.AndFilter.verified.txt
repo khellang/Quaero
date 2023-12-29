@@ -1,0 +1,1 @@
+﻿((name sw "John" and name ew "Doe") and age ge 42)

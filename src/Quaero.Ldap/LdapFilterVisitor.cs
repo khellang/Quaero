@@ -35,12 +35,9 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
     /// <inheritdoc />
     public override StringBuilder VisitNot(NotFilter filter, StringBuilder builder)
     {
-        if (filter.Operand is EqualFilter<object> { Value: null } eq)
+        if (filter.Operand is EqualFilter<object> eq)
         {
-            // This handles the following cases
-            // - directReports ne null -> (directReports=*)
-            // - not(directReports eq null) -> (directReports=*)
-            return VisitFilter(eq.Name, string.Empty, builder, prefix: "*");
+            return VisitNotEqual(new NotEqualFilter<object>(eq.Name, eq.Value), builder);
         }
 
         return builder.Append("(!").Append(this, filter.Operand).Append(')');
@@ -62,8 +59,20 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
     }
 
     /// <inheritdoc />
-    public override StringBuilder VisitNotEqual<T>(NotEqualFilter<T> filter, StringBuilder builder) =>
-        VisitNot(new NotFilter(Filter.Equal(filter.Name, filter.Value)), builder);
+    public override StringBuilder VisitNotEqual<T>(NotEqualFilter<T> filter, StringBuilder builder)
+    {
+        if (filter.Value is null)
+        {
+            // This handles the following cases
+            // - directReports ne null -> (directReports=*)
+            // - not(directReports eq null) -> (directReports=*){
+            return VisitFilter(filter.Name, string.Empty, builder, prefix: "*");
+        }
+
+        builder = builder.Append("(!");
+        builder = VisitFilter(filter.Name, filter.Value, builder);
+        return builder.Append(')');
+    }
 
     /// <inheritdoc />
     public override StringBuilder VisitStartsWith(StartsWithFilter filter, StringBuilder builder) =>

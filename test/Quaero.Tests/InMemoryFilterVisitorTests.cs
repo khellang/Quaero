@@ -18,6 +18,7 @@ public class InMemoryFilterVisitorTests : FilterVisitorTestBase
             RemovedDate = null,
             IsAdmin = false,
             CreatedDate = new DateTimeOffset(2023, 01, 01, 01, 02, 03, TimeSpan.FromHours(3)),
+            PublishedDate = new DateTime(2023, 01, 01),
         };
 
         Assert.True(predicate(testObject));
@@ -43,6 +44,8 @@ public class InMemoryFilterVisitorTests : FilterVisitorTestBase
         public required ObjectWithNullReturningToString NullString { get; init; }
 
         public required DateTime? RemovedDate { get; init; }
+
+        public required DateTime? PublishedDate { get; init; }
 
         public required DateTimeOffset CreatedDate { get; init; }
     }
