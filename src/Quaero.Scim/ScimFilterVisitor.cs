@@ -74,13 +74,6 @@ public sealed class ScimFilterVisitor : StringFilterVisitor
     public override StringBuilder VisitLessThanOrEqual<T>(LessThanOrEqualFilter<T> filter, StringBuilder builder) =>
         Operator(filter, builder, "le");
 
-    /// <inheritdoc />
-    public override StringBuilder VisitIn<T>(InFilter<T> filter, StringBuilder builder) =>
-        filter.Value
-            .Select(x => Filter.Equal(filter.Name, x))
-            .Aggregate(Filter.Or)
-            .Accept(this, builder);
-
     private StringBuilder VisitBinary(BinaryFilter filter, StringBuilder builder, string @operator) =>
         builder.Append('(').Append(this, filter.Left).Append(' ').Append(@operator).Append(' ').Append(this, filter.Right).Append(')');
 

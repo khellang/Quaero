@@ -53,5 +53,9 @@ public abstract class StringFilterVisitor : IFilterVisitor<string, StringBuilder
         where T : IComparable<T>;
 
     /// <inheritdoc />
-    public abstract StringBuilder VisitIn<T>(InFilter<T> filter, StringBuilder state);
+    public virtual StringBuilder VisitIn<T>(InFilter<T> filter, StringBuilder state) =>
+        filter.Value
+            .Select(x => Filter.Equal(filter.Name, x))
+            .Aggregate(Filter.Or)
+            .Accept(this, state);
 }
