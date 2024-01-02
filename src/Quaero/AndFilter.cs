@@ -10,7 +10,7 @@ public sealed class AndFilter : BinaryFilter
     /// </summary>
     /// <param name="left">The left operand.</param>
     /// <param name="right">The right operand.</param>
-    public AndFilter(Filter left, Filter right) : base(left, right)
+    public AndFilter(Filter left, Filter right) : base("and", left, right)
     {
     }
 
@@ -27,7 +27,4 @@ public sealed class AndFilter : BinaryFilter
     /// </summary>
     /// <returns>The negated AND expression as an OR expression.</returns>
     public override Filter Negate() => Or(Left.Negate(), Right.Negate());
-
-    /// <inheritdoc />
-    public override string ToString() => $"({Left} and {Right})";
 }

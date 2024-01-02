@@ -33,15 +33,8 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
     }
 
     /// <inheritdoc />
-    public override StringBuilder VisitNot(NotFilter filter, StringBuilder builder)
-    {
-        if (filter.Operand is EqualFilter<object> eq)
-        {
-            return VisitNotEqual(new NotEqualFilter<object>(eq.Name, eq.Value), builder);
-        }
-
-        return builder.Append("(!").Append(this, filter.Operand).Append(')');
-    }
+    public override StringBuilder VisitNot(NotFilter filter, StringBuilder builder) =>
+        builder.Append("(!").Append(this, filter.Operand).Append(')');
 
     /// <inheritdoc />
     public override StringBuilder VisitEqual<T>(EqualFilter<T> filter, StringBuilder builder)
