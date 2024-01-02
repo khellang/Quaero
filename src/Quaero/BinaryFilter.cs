@@ -13,17 +13,11 @@ public abstract class BinaryFilter : Filter
     /// <param name="left">The left operand.</param>
     /// <param name="right">The right operand.</param>
     /// <exception cref="ArgumentNullException">Thrown if either <paramref name="operator"/>, <paramref name="left"/> or <paramref name="right"/> is <c>null</c>.</exception>
-    protected BinaryFilter(string @operator, Filter left, Filter right)
+    protected BinaryFilter(string @operator, Filter left, Filter right) : base(@operator)
     {
-        Operator = @operator ?? throw new ArgumentNullException(nameof(@operator));
         Left = left ?? throw new ArgumentNullException(nameof(left));
         Right = right ?? throw new ArgumentNullException(nameof(right));
     }
-
-    /// <summary>
-    /// The operator.
-    /// </summary>
-    public string Operator { get; }
 
     /// <summary>
     /// The left operand.

@@ -9,9 +9,11 @@ public abstract class PropertyFilter<T> : Filter, IEquatable<PropertyFilter<T>?>
     /// <summary>
     /// Constructs a new instance of a <see cref="PropertyFilter{T}"/>.
     /// </summary>
+    /// <param name="operator">The filter operator.</param>
     /// <param name="name">The name of the property to check.</param>
     /// <param name="value">The value to check for.</param>
-    protected PropertyFilter(string name, T value) => (Name, Value) = (name, value);
+    protected PropertyFilter(string @operator, string name, T value) : base(@operator) =>
+        (Name, Value) = (name, value);
 
     /// <summary>
     /// The name of the property to check.
@@ -34,4 +36,7 @@ public abstract class PropertyFilter<T> : Filter, IEquatable<PropertyFilter<T>?>
 
     /// <inheritdoc/>
     public override int GetHashCode() => HashCode.Combine(StringComparer.OrdinalIgnoreCase.GetHashCode(Name), Value);
+
+    /// <inheritdoc/>
+    public override string ToString() => $"{Name} {Operator} {FormatValue(Value)}";
 }

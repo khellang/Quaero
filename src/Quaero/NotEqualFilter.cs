@@ -2,7 +2,7 @@ namespace Quaero;
 
 public sealed class NotEqualFilter<T> : PropertyFilter<T?>
 {
-    public NotEqualFilter(string name, T? value) : base(name, value) { }
+    public NotEqualFilter(string name, T? value) : base("ne", name, value) { }
 
     public override TState Accept<TResult, TState>(IFilterVisitor<TResult, TState> visitor, TState state) =>
         visitor.VisitNotEqual(this, state);
@@ -11,6 +11,4 @@ public sealed class NotEqualFilter<T> : PropertyFilter<T?>
         visitor.VisitNotEqual(this);
 
     public override Filter Negate() => Equal(Name, Value);
-
-    public override string ToString() => $"{Name} ne {FormatValue(Value)}";
 }

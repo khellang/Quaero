@@ -2,7 +2,7 @@ namespace Quaero;
 
 public sealed class LessThanOrEqualFilter<T> : PropertyFilter<T> where T : IComparable<T>
 {
-    public LessThanOrEqualFilter(string name, T value) : base(name, value)
+    public LessThanOrEqualFilter(string name, T value) : base("le", name, value)
     {
     }
 
@@ -13,6 +13,4 @@ public sealed class LessThanOrEqualFilter<T> : PropertyFilter<T> where T : IComp
         visitor.VisitLessThanOrEqual(this);
 
     public override Filter Negate() => GreaterThan(Name, Value);
-
-    public override string ToString() => $"{Name} le {FormatValue(Value)}";
 }

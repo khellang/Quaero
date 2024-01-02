@@ -9,6 +9,16 @@ namespace Quaero;
 /// </summary>
 public abstract class Filter
 {
+    public Filter(string @operator)
+    {
+        Operator = @operator ?? throw new ArgumentNullException(nameof(@operator));
+    }
+
+    /// <summary>
+    /// The filter operator.
+    /// </summary>
+    public string Operator { get; }
+
     /// <summary>
     /// Convenience method to construct an <see name="EqualFilter{T}"/>.
     /// </summary>

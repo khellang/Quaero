@@ -10,16 +10,10 @@ public abstract class UnaryFilter : Filter
     /// </summary>
     /// <param name="operator">The operator.</param>
     /// <param name="operand">The operand.</param>
-    public UnaryFilter(string @operator, Filter operand)
+    public UnaryFilter(string @operator, Filter operand) : base(@operator)
     {
-        Operator = @operator;
         Operand = operand ?? throw new ArgumentNullException(nameof(operand));
     }
-
-    /// <summary>
-    /// The operator.
-    /// </summary>
-    public string Operator { get; }
 
     /// <summary>
     /// The operand.
