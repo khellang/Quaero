@@ -105,16 +105,6 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
             return VisitFilter(filter.Name, @long + 1, builder, ">=");
         }
 
-        if (filter.Value is double @double)
-        {
-            return VisitFilter(filter.Name, @double + 1, builder, ">=");
-        }
-
-        if (filter.Value is float @float)
-        {
-            return VisitFilter(filter.Name, @float + 1, builder, ">=");
-        }
-
         return VisitNot(new NotFilter(filter.Negate()), builder);
     }
 
@@ -143,16 +133,6 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         if (filter.Value is long @long)
         {
             return VisitFilter(filter.Name, @long - 1, builder, "<=");
-        }
-
-        if (filter.Value is double @double)
-        {
-            return VisitFilter(filter.Name, @double - 1, builder, "<=");
-        }
-
-        if (filter.Value is float @float)
-        {
-            return VisitFilter(filter.Name, @float - 1, builder, "<=");
         }
 
         return VisitNot(new NotFilter(filter.Negate()), builder);
