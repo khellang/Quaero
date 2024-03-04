@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Quaero.Ldap\Quaero.Ldap.csproj" />
     <ProjectReference Include="..\Quaero.MicrosoftGraph\Quaero.MicrosoftGraph.csproj" />
+    <ProjectReference Include="..\Quaero.Scim\Quaero.Scim.csproj" />
     <ProjectReference Include="..\Quaero\Quaero.csproj" />
   </ItemGroup>
 

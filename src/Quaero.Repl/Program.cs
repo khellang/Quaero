@@ -17,6 +17,7 @@ while (line != null)
 
             AnsiConsole.MarkupLineInterpolated($"Graph: [blue]{filter.ToMicrosoftGraphFilter()}[/]");
             AnsiConsole.MarkupLineInterpolated($"LDAP: [purple]{filter.ToLdapFilter()}[/]");
+            AnsiConsole.MarkupLineInterpolated($"SCIM: [green]{filter.ToScimFilter()}[/]");
         }
         catch (ParseException e)
         {
