@@ -37,7 +37,7 @@ public abstract class StringFilterVisitor : IFilterVisitor<string, StringBuilder
     public abstract StringBuilder VisitEndsWith(EndsWithFilter filter, StringBuilder builder);
 
     /// <inheritdoc />
-    public abstract StringBuilder VisitContains(ContainsFilter filter, StringBuilder state);
+    public abstract StringBuilder VisitContains(ContainsFilter filter, StringBuilder builder);
 
     /// <inheritdoc />
     public abstract StringBuilder VisitGreaterThan<T>(GreaterThanFilter<T> filter, StringBuilder builder)
@@ -56,9 +56,12 @@ public abstract class StringFilterVisitor : IFilterVisitor<string, StringBuilder
         where T : IComparable<T>;
 
     /// <inheritdoc />
-    public virtual StringBuilder VisitIn<T>(InFilter<T> filter, StringBuilder state) =>
+    public abstract StringBuilder VisitPresence(PresenceFilter filter, StringBuilder builder);
+
+    /// <inheritdoc />
+    public virtual StringBuilder VisitIn<T>(InFilter<T> filter, StringBuilder builder) =>
         filter.Value
             .Select(x => Filter.Equal(filter.Name, x))
             .Aggregate(Filter.Or)
-            .Accept(this, state);
+            .Accept(this, builder);
 }

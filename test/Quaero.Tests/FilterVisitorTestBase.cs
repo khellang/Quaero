@@ -55,6 +55,9 @@ public abstract class FilterVisitorTestBase
     public Task InFilter() => AssertFilter(In("department", "Retail", "Sales"));
 
     [Fact]
+    public Task PresenceFilter() => AssertFilter(Present("disabledDate"));
+
+    [Fact]
     public Task NullToString() => AssertFilter(NotEqual("nullString", new ObjectWithNullReturningToString()));
 
     protected abstract Task AssertFilter(Filter filter);

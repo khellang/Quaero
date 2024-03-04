@@ -113,6 +113,14 @@ public interface IFilterVisitor<out TResult, TState>
     TState VisitLessThanOrEqual<T>(LessThanOrEqualFilter<T> filter, TState state) where T : IComparable<T>;
 
     /// <summary>
+    /// Visits an <see cref="PresenceFilter"/>.
+    /// </summary>
+    /// <param name="filter">The filter being visited.</param>
+    /// <param name="state">The current state.</param>
+    /// <returns>The result of the visit.</returns>
+    TState VisitPresence(PresenceFilter filter, TState state);
+
+    /// <summary>
     /// Visits an <see cref="InFilter{T}"/>.
     /// </summary>
     /// <param name="filter">The filter being visited.</param>
@@ -220,6 +228,13 @@ public interface IFilterVisitor<out TResult>
     /// <param name="filter">The filter being visited.</param>
     /// <returns>The result of the visit.</returns>
     TResult VisitLessThanOrEqual<T>(LessThanOrEqualFilter<T> filter) where T : IComparable<T>;
+
+    /// <summary>
+    /// Visits an <see cref="PresenceFilter"/>.
+    /// </summary>
+    /// <param name="filter">The filter being visited.</param>
+    /// <returns>The result of the visit.</returns>
+    TResult VisitPresence(PresenceFilter filter);
 
     /// <summary>
     /// Visits an <see cref="InFilter{T}"/>.

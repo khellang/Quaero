@@ -9,7 +9,7 @@ namespace Quaero;
 /// </summary>
 public abstract class Filter
 {
-    public Filter(string @operator)
+    protected Filter(string @operator)
     {
         Operator = @operator ?? throw new ArgumentNullException(nameof(@operator));
     }
@@ -17,7 +17,7 @@ public abstract class Filter
     /// <summary>
     /// The filter operator.
     /// </summary>
-    public string Operator { get; }
+    protected string Operator { get; }
 
     /// <summary>
     /// Convenience method to construct an <see name="EqualFilter{T}"/>.
@@ -63,6 +63,8 @@ public abstract class Filter
 
     public static Filter LessThanOrEqual<T>(string name, T value) where T : IComparable<T> =>
         new LessThanOrEqualFilter<T>(name, value);
+
+    public static Filter Present(string name) => new PresenceFilter(name);
 
     public static Filter Not(Filter filter) => new NotFilter(filter);
 

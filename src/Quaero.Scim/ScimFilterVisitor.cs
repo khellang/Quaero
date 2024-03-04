@@ -18,15 +18,15 @@ public sealed class ScimFilterVisitor : StringFilterVisitor
 
     /// <inheritdoc />
     public override StringBuilder VisitAnd(AndFilter filter, StringBuilder builder) =>
-        VisitBinary(filter, builder);
+        VisitBinary(filter, builder, "and");
 
     /// <inheritdoc />
     public override StringBuilder VisitOr(OrFilter filter, StringBuilder builder) =>
-        VisitBinary(filter, builder);
+        VisitBinary(filter, builder, "or");
 
     /// <inheritdoc />
     public override StringBuilder VisitNot(NotFilter filter, StringBuilder builder) =>
-        VisitUnary(filter, builder);
+        builder.Append("not(").Append(this, filter.Operand).Append(')');
 
     /// <inheritdoc />
     public override StringBuilder VisitEqual<TValue>(EqualFilter<TValue> filter, StringBuilder builder) =>
@@ -37,7 +37,7 @@ public sealed class ScimFilterVisitor : StringFilterVisitor
     {
         if (filter.Value is null)
         {
-            return builder.Append(filter.Name).Append(' ').Append("pr");
+            return Presence(filter, builder);
         }
 
         return Operator(filter, builder, "ne");
@@ -71,14 +71,21 @@ public sealed class ScimFilterVisitor : StringFilterVisitor
     public override StringBuilder VisitLessThanOrEqual<T>(LessThanOrEqualFilter<T> filter, StringBuilder builder) =>
         Operator(filter, builder, "le");
 
-    private StringBuilder VisitUnary(UnaryFilter filter, StringBuilder builder) =>
-        builder.Append(filter.Operator).Append('(').Append(this, filter.Operand).Append(')');
+    /// <inheritdoc />
+    public override StringBuilder VisitPresence(PresenceFilter filter, StringBuilder builder) =>
+        Presence(filter, builder);
 
-    private StringBuilder VisitBinary(BinaryFilter filter, StringBuilder builder) =>
-        builder.Append('(').Append(this, filter.Left).Append(' ').Append(filter.Operator).Append(' ').Append(this, filter.Right).Append(')');
+    private static StringBuilder Presence(PropertyFilter filter, StringBuilder builder) =>
+        PropertyOperator(filter, builder, "pr");
+
+    private StringBuilder VisitBinary(BinaryFilter filter, StringBuilder builder, string @operator) =>
+        builder.Append('(').Append(this, filter.Left).Append(' ').Append(@operator).Append(' ').Append(this, filter.Right).Append(')');
 
     private static StringBuilder Operator<TValue>(PropertyValueFilter<TValue> filter, StringBuilder builder, string @operator) =>
-        builder.Append(filter.Name).Append(' ').Append(@operator).Append(' ').Append(FormatValue(filter.Value));
+        PropertyOperator(filter, builder, @operator).Append(' ').Append(FormatValue(filter.Value));
+
+    private static StringBuilder PropertyOperator(PropertyFilter filter, StringBuilder builder, string @operator) =>
+        builder.Append(filter.Name).Append(' ').Append(@operator);
 
     private static string FormatValue<TValue>(TValue? value) => value switch
     {

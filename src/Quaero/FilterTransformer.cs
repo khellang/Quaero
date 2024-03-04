@@ -45,5 +45,8 @@ public abstract class FilterTransformer : IFilterVisitor<Filter>
     public virtual Filter VisitLessThanOrEqual<T>(LessThanOrEqualFilter<T> filter) where T : IComparable<T> => filter;
 
     /// <inheritdoc />
+    public virtual Filter VisitPresence(PresenceFilter filter) => filter;
+
+    /// <inheritdoc />
     public virtual Filter VisitIn<T>(InFilter<T> filter) => filter;
 }

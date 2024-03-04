@@ -77,6 +77,13 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
             VisitPropertyValueFilter(filter, (x, y) => x.CompareTo(y) <= 0);
 
     /// <inheritdoc />
+    public Func<T, bool> VisitPresence(PresenceFilter filter)
+    {
+        var getValue = GetPropertyAccessor(filter.Name);
+        return resource => getValue(resource) is not null;
+    }
+
+    /// <inheritdoc />
     public Func<T, bool> VisitIn<TValue>(InFilter<TValue> filter) =>
         VisitPropertyValueFilter<ISet<TValue>, TValue>(filter, (x, y) => y.Contains(x));
 
@@ -84,7 +91,7 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
     public Func<T, bool> VisitEqual<TValue>(EqualFilter<TValue> filter) =>
         VisitPropertyValueFilter(filter, (left, right) => EqualityComparer<TValue>.Default.Equals(left!, right!));
 
-    protected abstract bool TryGetPropertyAccessor<TValue>(string name, [NotNullWhen(true)] out Func<T, TValue>? accessor);
+    protected abstract bool TryGetPropertyAccessor(string name, [NotNullWhen(true)] out Func<T, object?>? accessor);
 
     private Func<T, bool> VisitStringFilter(PropertyValueFilter<string?> filter, Func<string, string, bool> predicate) =>
         VisitPropertyValueFilter(filter, (x, y) => !string.IsNullOrEmpty(x) && !string.IsNullOrEmpty(y) && predicate(x!, y!));
@@ -94,22 +101,27 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
 
     private Func<T, bool> VisitPropertyValueFilter<TFilter, TProperty>(PropertyValueFilter<TFilter> filter, Func<TProperty, TFilter, bool> predicate)
     {
-        if (!TryGetPropertyAccessor<TProperty>(filter.Name, out var getValue))
+        var getValue = GetPropertyAccessor(filter.Name);
+        return resource => predicate((TProperty)getValue(resource)!, filter.Value);
+    }
+
+    private Func<T, object?> GetPropertyAccessor(string name)
+    {
+        if (!TryGetPropertyAccessor(name, out var getValue))
         {
-            throw new MissingMemberException(typeof(T).FullName, filter.Name);
+            throw new MissingMemberException(typeof(T).FullName, name);
         }
 
-        return resource => predicate(getValue(resource), filter.Value);
+        return getValue;
     }
 
     private sealed class ReflectionBasedInMemoryFilterVisitor : InMemoryFilterVisitor<T>
     {
-        protected override bool TryGetPropertyAccessor<TValue>(string name, [NotNullWhen(true)] out Func<T, TValue>? accessor)
-            where TValue : default
+        protected override bool TryGetPropertyAccessor(string name, [NotNullWhen(true)] out Func<T, object?>? accessor)
         {
             if (PropertyCache.Properties.TryGetValue(name, out var property) && property.CanRead)
             {
-                accessor = resource => (TValue)property.GetValue(resource)!;
+                accessor = resource => property.GetValue(resource)!;
                 return true;
             }
 

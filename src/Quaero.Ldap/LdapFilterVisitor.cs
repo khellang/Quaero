@@ -44,7 +44,7 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
             // This handles the following case:
             // - manager eq null -> (!(manager=*))
             builder = builder.Append("(!");
-            builder = VisitFilter(filter.Name, string.Empty, builder, prefix: "*");
+            builder = VisitPresence(filter.Name, builder);
             return builder.Append(')');
         }
 
@@ -59,7 +59,7 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
             // This handles the following cases
             // - directReports ne null -> (directReports=*)
             // - not(directReports eq null) -> (directReports=*){
-            return VisitFilter(filter.Name, string.Empty, builder, prefix: "*");
+            return VisitPresence(filter.Name, builder);
         }
 
         builder = builder.Append("(!");
@@ -138,6 +138,13 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
     /// <inheritdoc />
     public override StringBuilder VisitLessThanOrEqual<T>(LessThanOrEqualFilter<T> filter, StringBuilder builder) =>
         VisitPropertyValueFilter(filter, builder, "<=");
+
+    /// <inheritdoc />
+    public override StringBuilder VisitPresence(PresenceFilter filter, StringBuilder builder) =>
+        VisitPresence(filter.Name, builder);
+
+    private static StringBuilder VisitPresence(string name, StringBuilder builder) =>
+        VisitFilter(name, string.Empty, builder, prefix: "*");
 
     private static StringBuilder VisitPropertyValueFilter<TValue>(PropertyValueFilter<TValue> filter, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "") =>
         VisitFilter(filter.Name, filter.Value, builder, @operator, prefix, suffix);
