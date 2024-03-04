@@ -58,10 +58,10 @@ internal static class FilterParser
         Token.EqualToValueIgnoreCase(FilterToken.Identifier, "ge").Value(PropertyOperator.GreaterThanOrEqual);
 
     private static TokenListParser<FilterToken, PropertyOperator> StartsWithOperator { get; } =
-        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "startsWith").Value(PropertyOperator.StartsWith);
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "sw").Value(PropertyOperator.StartsWith);
 
     private static TokenListParser<FilterToken, PropertyOperator> EndsWithOperator { get; } =
-        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "endsWith").Value(PropertyOperator.EndsWith);
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "ew").Value(PropertyOperator.EndsWith);
 
     private static TokenListParser<FilterToken, PropertyOperator> InOperator { get; } =
         Token.EqualToValueIgnoreCase(FilterToken.Identifier, "in").Value(PropertyOperator.In);
