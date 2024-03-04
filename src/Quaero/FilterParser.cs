@@ -69,6 +69,9 @@ internal static class FilterParser
     private static TokenListParser<FilterToken, PropertyOperator> InOperator { get; } =
         Token.EqualToValueIgnoreCase(FilterToken.Identifier, "in").Value(PropertyOperator.In);
 
+    private static TokenListParser<FilterToken, PropertyOperator> PresenceOperator { get; } =
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "pr").Value(PropertyOperator.Presence);
+
     private static TokenListParser<FilterToken, PropertyOperator> PropertyOperators { get; } =
         EqualOperator
             .Or(NotEqualOperator)
@@ -79,6 +82,7 @@ internal static class FilterParser
             .Or(StartsWithOperator)
             .Or(EndsWithOperator)
             .Or(ContainsOperator)
+            .Or(PresenceOperator)
             .Or(InOperator)
             .Named("property operator");
 
@@ -106,7 +110,7 @@ internal static class FilterParser
         from lparen in Token.EqualTo(FilterToken.OpenParen).Optional()
         from identifier in Token.EqualTo(FilterToken.Identifier)
         from @operator in PropertyOperators
-        from value in Value
+        from value in Value.OptionalOrDefault(Unit.Value)
         from rparen in Token.EqualTo(FilterToken.CloseParen).Optional()
         select GetFilter(identifier, negated.HasValue, @operator, value);
 
@@ -143,6 +147,7 @@ internal static class FilterParser
             PropertyOperator.StartsWith => Filter.StartsWith(name, GetString(value)),
             PropertyOperator.EndsWith => Filter.EndsWith(name, GetString(value)),
             PropertyOperator.Contains => Filter.Contains(name, GetString(value)),
+            PropertyOperator.Presence => Filter.Present(name),
             PropertyOperator.In => Filter.In(name, GetList(value)),
             _ => throw new ArgumentOutOfRangeException(nameof(@operator), @operator, "Invalid property operator."),
         };
@@ -154,12 +159,14 @@ internal static class FilterParser
     {
         null => null,
         string str => str,
+        Unit => throw new ParseException("Operator requires a string argument."),
         _ => throw new ParseException($"Value of type '{FormatType(value)}' is not supported. Expected a string.")
     };
 
     private static object[] GetList(object? value) => value switch
     {
         object[] list => list,
+        Unit => throw new ParseException("Operator requires a list argument."),
         _ => throw new ParseException($"Value of type '{FormatType(value)}' is not supported. Expected a list.")
     };
 
@@ -167,6 +174,11 @@ internal static class FilterParser
 
     private static Filter CreateFilter(Type filterType, string name, object? value)
     {
+        if (value is Unit)
+        {
+            throw new ParseException("Operator requires an argument.");
+        }
+
         var type = filterType.MakeGenericType(value?.GetType() ?? typeof(object));
         return (Filter)Activator.CreateInstance(type, name, value)!;
     }
@@ -199,6 +211,8 @@ internal static class FilterParser
         EndsWith,
 
         Contains,
+
+        Presence,
 
         In,
     }

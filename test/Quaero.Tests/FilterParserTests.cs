@@ -6,6 +6,7 @@ public class FilterParserTests
     [Theory]
     [InlineData("userName eq \"khellang\"")]
     [InlineData("userName ne null")]
+    [InlineData("userName pr")]
     [InlineData("age gt 18")]
     [InlineData("age le 21")]
     [InlineData("timestamp ge 1709586325")]
