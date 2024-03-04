@@ -1,0 +1,1 @@
+﻿domain in ("outlook.com", "example.com")

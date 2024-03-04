@@ -1,0 +1,1 @@
+﻿userName ne null
