@@ -77,7 +77,7 @@ public sealed class ScimFilterVisitor : StringFilterVisitor
     private StringBuilder VisitBinary(BinaryFilter filter, StringBuilder builder) =>
         builder.Append('(').Append(this, filter.Left).Append(' ').Append(filter.Operator).Append(' ').Append(this, filter.Right).Append(')');
 
-    private static StringBuilder Operator<TValue>(PropertyFilter<TValue> filter, StringBuilder builder, string @operator) =>
+    private static StringBuilder Operator<TValue>(PropertyValueFilter<TValue> filter, StringBuilder builder, string @operator) =>
         builder.Append(filter.Name).Append(' ').Append(@operator).Append(' ').Append(FormatValue(filter.Value));
 
     private static string FormatValue<TValue>(TValue? value) => value switch

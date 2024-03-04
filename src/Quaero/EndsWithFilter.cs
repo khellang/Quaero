@@ -3,7 +3,7 @@ namespace Quaero;
 /// <summary>
 /// A filter representing the function to check whether a string ends with a value.
 /// </summary>
-public sealed class EndsWithFilter : PropertyFilter<string?>
+public sealed class EndsWithFilter : PropertyValueFilter<string?>
 {
     /// <summary>
     /// Constructs a new instance of an <see cref="EndsWithFilter"/>.

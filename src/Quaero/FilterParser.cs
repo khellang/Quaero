@@ -168,7 +168,7 @@ internal static class FilterParser
     private static Filter CreateFilter(Type filterType, string name, object? value)
     {
         var type = filterType.MakeGenericType(value?.GetType() ?? typeof(object));
-        return (Filter)Activator.CreateInstance(type, name, value);
+        return (Filter)Activator.CreateInstance(type, name, value)!;
     }
 
     private enum LogicalOperator

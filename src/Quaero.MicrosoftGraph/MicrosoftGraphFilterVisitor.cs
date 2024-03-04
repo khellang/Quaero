@@ -73,10 +73,10 @@ public sealed class MicrosoftGraphFilterVisitor : StringFilterVisitor
     private StringBuilder VisitBinary(BinaryFilter filter, StringBuilder builder) =>
         builder.Append('(').Append(this, filter.Left).Append(' ').Append(filter.Operator).Append(' ').Append(this, filter.Right).Append(')');
 
-    private static StringBuilder InfixOperator<TValue>(PropertyFilter<TValue> filter, StringBuilder builder, string @operator) =>
+    private static StringBuilder InfixOperator<TValue>(PropertyValueFilter<TValue> filter, StringBuilder builder, string @operator) =>
         builder.Append(filter.Name).Append(' ').Append(@operator).Append(' ').Append(FormatValue(filter.Value));
 
-    private static StringBuilder PrefixOperator<TValue>(PropertyFilter<TValue> filter, StringBuilder builder, string @operator) =>
+    private static StringBuilder PrefixOperator<TValue>(PropertyValueFilter<TValue> filter, StringBuilder builder, string @operator) =>
         builder.Append(@operator).Append('(').Append(filter.Name).Append(", ").Append(FormatValue(filter.Value)).Append(')');
 
     private static string FormatValue<TValue>(TValue? value) => value switch

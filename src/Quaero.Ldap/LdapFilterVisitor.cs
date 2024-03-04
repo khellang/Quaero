@@ -48,7 +48,7 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
             return builder.Append(')');
         }
 
-        return VisitPropertyFilter(filter, builder);
+        return VisitPropertyValueFilter(filter, builder);
     }
 
     /// <inheritdoc />
@@ -69,15 +69,15 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
 
     /// <inheritdoc />
     public override StringBuilder VisitStartsWith(StartsWithFilter filter, StringBuilder builder) =>
-        VisitPropertyFilter(filter, builder, suffix: "*");
+        VisitPropertyValueFilter(filter, builder, suffix: "*");
 
     /// <inheritdoc />
     public override StringBuilder VisitEndsWith(EndsWithFilter filter, StringBuilder builder) =>
-        VisitPropertyFilter(filter, builder, prefix: "*");
+        VisitPropertyValueFilter(filter, builder, prefix: "*");
 
     /// <inheritdoc />
     public override StringBuilder VisitContains(ContainsFilter filter, StringBuilder builder) =>
-        VisitPropertyFilter(filter, builder, prefix: "*", suffix: "*");
+        VisitPropertyValueFilter(filter, builder, prefix: "*", suffix: "*");
 
     /// <inheritdoc />
     public override StringBuilder VisitGreaterThan<T>(GreaterThanFilter<T> filter, StringBuilder builder)
@@ -107,7 +107,7 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
 
     /// <inheritdoc />
     public override StringBuilder VisitGreaterThanOrEqual<T>(GreaterThanOrEqualFilter<T> filter, StringBuilder builder) =>
-        VisitPropertyFilter(filter, builder, ">=");
+        VisitPropertyValueFilter(filter, builder, ">=");
 
     /// <inheritdoc />
     public override StringBuilder VisitLessThan<T>(LessThanFilter<T> filter, StringBuilder builder)
@@ -137,9 +137,9 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
 
     /// <inheritdoc />
     public override StringBuilder VisitLessThanOrEqual<T>(LessThanOrEqualFilter<T> filter, StringBuilder builder) =>
-        VisitPropertyFilter(filter, builder, "<=");
+        VisitPropertyValueFilter(filter, builder, "<=");
 
-    private static StringBuilder VisitPropertyFilter<TValue>(PropertyFilter<TValue> filter, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "") =>
+    private static StringBuilder VisitPropertyValueFilter<TValue>(PropertyValueFilter<TValue> filter, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "") =>
         VisitFilter(filter.Name, filter.Value, builder, @operator, prefix, suffix);
 
     private static StringBuilder VisitFilter<TValue>(string name, TValue value, StringBuilder builder, string @operator = "=", string prefix = "", string suffix = "")

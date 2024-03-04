@@ -1,6 +1,6 @@
 namespace Quaero;
 
-public sealed class NotEqualFilter<T> : PropertyFilter<T?>
+public sealed class NotEqualFilter<T> : PropertyValueFilter<T?>
 {
     public NotEqualFilter(string name, T? value) : base("ne", name, value) { }
 

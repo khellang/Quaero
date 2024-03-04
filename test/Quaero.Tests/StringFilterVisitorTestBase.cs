@@ -7,7 +7,7 @@ public abstract class StringFilterVisitorTestBase : FilterVisitorTestBase
     {
         var settingsTask = Verify(ToString(filter.Optimize()));
 
-        if (filter is PropertyFilter<object> propertyFilter)
+        if (filter is PropertyValueFilter<object> propertyFilter)
         {
             // For parameterized tests, we need to specify parameters to disambiguate file names.
             settingsTask.UseParameters(propertyFilter.Name, propertyFilter.Value);

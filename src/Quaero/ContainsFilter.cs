@@ -3,7 +3,7 @@ namespace Quaero;
 /// <summary>
 /// A filter representing the function to check whether a string contains a value.
 /// </summary>
-public sealed class ContainsFilter : PropertyFilter<string?>
+public sealed class ContainsFilter : PropertyValueFilter<string?>
 {
     /// <summary>
     /// Constructs a new instance of an <see cref="ContainsFilter"/>.

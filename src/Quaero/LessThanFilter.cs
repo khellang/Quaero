@@ -1,6 +1,6 @@
 namespace Quaero;
 
-public sealed class LessThanFilter<T> : PropertyFilter<T> where T : IComparable<T>
+public sealed class LessThanFilter<T> : PropertyValueFilter<T> where T : IComparable<T>
 {
     public LessThanFilter(string name, T value) : base("lt", name, value)
     {

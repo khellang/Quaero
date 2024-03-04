@@ -1,6 +1,6 @@
 namespace Quaero;
 
-public sealed class GreaterThanFilter<T> : PropertyFilter<T> where T : IComparable<T>
+public sealed class GreaterThanFilter<T> : PropertyValueFilter<T> where T : IComparable<T>
 {
     public GreaterThanFilter(string name, T value) : base("gt", name, value)
     {

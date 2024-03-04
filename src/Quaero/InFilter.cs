@@ -1,6 +1,6 @@
 namespace Quaero;
 
-public class InFilter<T> : PropertyFilter<ISet<T>>
+public class InFilter<T> : PropertyValueFilter<ISet<T>>
 {
     public InFilter(string name, HashSet<T> values) : base("in", name, values) { }
 
