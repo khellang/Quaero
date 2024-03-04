@@ -98,10 +98,12 @@ internal static class FilterParser
             .Named("value");
 
     private static TokenListParser<FilterToken, Filter> Predicate { get; } =
-        from identifier in Token.EqualTo(FilterToken.Identifier)
         from negated in NotOperator.Optional()
+        from lparen in Token.EqualTo(FilterToken.OpenParen).Optional()
+        from identifier in Token.EqualTo(FilterToken.Identifier)
         from @operator in PropertyOperators
         from value in Value
+        from rparen in Token.EqualTo(FilterToken.CloseParen).Optional()
         select GetFilter(identifier, negated.HasValue, @operator, value);
 
     private static readonly TokenListParser<FilterToken, Filter> Operand =

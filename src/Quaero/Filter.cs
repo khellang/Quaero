@@ -132,13 +132,14 @@ public abstract class Filter
         null => "null",
         true => "true",
         false => "false",
-        string str => $"'{Escape(str)}'",
-        DateTime dateTime => dateTime.ToString("O"),
-        DateTimeOffset dateTimeOffset => dateTimeOffset.ToString("O"),
+        Guid guid => $"\"{guid}\"",
+        string str => $"\"{Escape(str)}\"",
+        DateTime dateTime => $"\"{dateTime:O}\"",
+        DateTimeOffset dateTimeOffset => $"\"{dateTimeOffset:O}\"",
         IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
         IEnumerable<object> values => $"({string.Join(", ", values.Select(FormatValue))})",
         _ => value.ToString() ?? "null"
     };
 
-    private static string Escape(string value) => value.Replace("'", "''");
+    private static string Escape(string value) => value.Replace("\"", "\\\"");
 }
