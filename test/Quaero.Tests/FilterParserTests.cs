@@ -21,10 +21,6 @@ public class FilterParserTests
     [InlineData("name co \"John\"")]
     public async Task Parse_Correct_Result(string value)
     {
-        var settings = Verify(Parse(value).ToString());
-
-        settings.UseParameters(value);
-
-        await settings;
+        await Verify(Parse(value).ToString()).UseParameters(value);
     }
 }

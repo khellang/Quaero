@@ -109,7 +109,7 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
         {
             if (PropertyCache.Properties.TryGetValue(name, out var property) && property.CanRead)
             {
-                accessor = resource => (TValue)property.GetValue(resource);
+                accessor = resource => (TValue)property.GetValue(resource)!;
                 return true;
             }
 
