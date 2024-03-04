@@ -40,6 +40,9 @@ public abstract class FilterVisitorTestBase
     public Task EndsWithFilter() => AssertFilter(EndsWith("name", "Doe"));
 
     [Fact]
+    public Task ContainsFilter() => AssertFilter(Contains("name", "John"));
+
+    [Fact]
     public Task AndFilter() => AssertFilter(StartsWith("name", "John").And(EndsWith("name", "Doe")).And(GreaterThanOrEqual("age", 42)));
 
     [Fact]

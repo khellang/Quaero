@@ -37,6 +37,9 @@ public abstract class StringFilterVisitor : IFilterVisitor<string, StringBuilder
     public abstract StringBuilder VisitEndsWith(EndsWithFilter filter, StringBuilder builder);
 
     /// <inheritdoc />
+    public abstract StringBuilder VisitContains(ContainsFilter filter, StringBuilder state);
+
+    /// <inheritdoc />
     public abstract StringBuilder VisitGreaterThan<T>(GreaterThanFilter<T> filter, StringBuilder builder)
         where T : IComparable<T>;
 

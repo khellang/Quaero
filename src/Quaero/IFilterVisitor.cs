@@ -73,6 +73,14 @@ public interface IFilterVisitor<out TResult, TState>
     TState VisitEndsWith(EndsWithFilter filter, TState state);
 
     /// <summary>
+    /// Visits an <see cref="ContainsFilter"/>.
+    /// </summary>
+    /// <param name="filter">The filter being visited.</param>
+    /// <param name="state">The current state.</param>
+    /// <returns>The result of the visit.</returns>
+    TState VisitContains(ContainsFilter filter, TState state);
+
+    /// <summary>
     /// Visits a <see cref="GreaterThanFilter{T}"/>.
     /// </summary>
     /// <param name="filter">The filter being visited.</param>
@@ -177,6 +185,13 @@ public interface IFilterVisitor<out TResult>
     /// <param name="filter">The filter being visited.</param>
     /// <returns>The result of the visit.</returns>
     TResult VisitEndsWith(EndsWithFilter filter);
+
+    /// <summary>
+    /// Visits an <see cref="ContainsFilter"/>.
+    /// </summary>
+    /// <param name="filter">The filter being visited.</param>
+    /// <returns>The result of the visit.</returns>
+    TResult VisitContains(ContainsFilter filter);
 
     /// <summary>
     /// Visits a <see cref="GreaterThanFilter{T}"/>.

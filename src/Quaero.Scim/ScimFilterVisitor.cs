@@ -52,6 +52,10 @@ public sealed class ScimFilterVisitor : StringFilterVisitor
         Operator(filter, builder, "ew");
 
     /// <inheritdoc />
+    public override StringBuilder VisitContains(ContainsFilter filter, StringBuilder builder) =>
+        Operator(filter, builder, "co");
+
+    /// <inheritdoc />
     public override StringBuilder VisitGreaterThan<T>(GreaterThanFilter<T> filter, StringBuilder builder) =>
         Operator(filter, builder, "gt");
 

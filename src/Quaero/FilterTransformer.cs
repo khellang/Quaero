@@ -30,6 +30,9 @@ public abstract class FilterTransformer : IFilterVisitor<Filter>
     public virtual Filter VisitEndsWith(EndsWithFilter filter) => filter;
 
     /// <inheritdoc />
+    public virtual Filter VisitContains(ContainsFilter filter) => filter;
+
+    /// <inheritdoc />
     public virtual Filter VisitGreaterThan<T>(GreaterThanFilter<T> filter) where T : IComparable<T> => filter;
 
     /// <inheritdoc />

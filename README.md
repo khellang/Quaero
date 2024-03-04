@@ -37,6 +37,7 @@ The language supports a wide range of operators supported by most filter/query l
 
 - Starts with (`sw`)
 - Ends with (`ew`)
+- Contains (`co`)
 
 ## Example queries
 

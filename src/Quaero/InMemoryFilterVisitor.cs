@@ -53,6 +53,10 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
         VisitStringFilter(filter, (x, y) => x.EndsWith(y, StringComparison.Ordinal));
 
     /// <inheritdoc />
+    public Func<T, bool> VisitContains(ContainsFilter filter) =>
+        VisitStringFilter(filter, (x, y) => x.Contains(y));
+
+    /// <inheritdoc />
     public Func<T, bool> VisitGreaterThan<TValue>(GreaterThanFilter<TValue> filter)
         where TValue : IComparable<TValue> =>
             VisitPropertyFilter(filter, (x, y) => x.CompareTo(y) > 0);

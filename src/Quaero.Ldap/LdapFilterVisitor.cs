@@ -76,6 +76,10 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         VisitPropertyFilter(filter, builder, prefix: "*");
 
     /// <inheritdoc />
+    public override StringBuilder VisitContains(ContainsFilter filter, StringBuilder builder) =>
+        VisitPropertyFilter(filter, builder, prefix: "*", suffix: "*");
+
+    /// <inheritdoc />
     public override StringBuilder VisitGreaterThan<T>(GreaterThanFilter<T> filter, StringBuilder builder)
     {
         if (filter.Value is byte @byte)

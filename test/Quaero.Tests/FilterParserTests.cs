@@ -18,6 +18,7 @@ public class FilterParserTests
     [InlineData("not(userName eq \"admin\")")]
     [InlineData("isEnabled eq true")]
     [InlineData("isEnabled ne false")]
+    [InlineData("name co \"John\"")]
     public async Task Parse_Correct_Result(string value)
     {
         var settings = Verify(Parse(value).ToString());

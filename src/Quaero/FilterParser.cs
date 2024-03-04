@@ -63,6 +63,9 @@ internal static class FilterParser
     private static TokenListParser<FilterToken, PropertyOperator> EndsWithOperator { get; } =
         Token.EqualToValueIgnoreCase(FilterToken.Identifier, "ew").Value(PropertyOperator.EndsWith);
 
+    private static TokenListParser<FilterToken, PropertyOperator> ContainsOperator { get; } =
+        Token.EqualToValueIgnoreCase(FilterToken.Identifier, "co").Value(PropertyOperator.Contains);
+
     private static TokenListParser<FilterToken, PropertyOperator> InOperator { get; } =
         Token.EqualToValueIgnoreCase(FilterToken.Identifier, "in").Value(PropertyOperator.In);
 
@@ -75,6 +78,7 @@ internal static class FilterParser
             .Or(GreaterThanOrEqualOperator)
             .Or(StartsWithOperator)
             .Or(EndsWithOperator)
+            .Or(ContainsOperator)
             .Or(InOperator)
             .Named("property operator");
 
@@ -138,6 +142,7 @@ internal static class FilterParser
             PropertyOperator.GreaterThanOrEqual => CreateFilter(typeof(GreaterThanOrEqualFilter<>), name, value),
             PropertyOperator.StartsWith => Filter.StartsWith(name, GetString(value)),
             PropertyOperator.EndsWith => Filter.EndsWith(name, GetString(value)),
+            PropertyOperator.Contains => Filter.Contains(name, GetString(value)),
             PropertyOperator.In => Filter.In(name, GetList(value)),
             _ => throw new ArgumentOutOfRangeException(nameof(@operator), @operator, "Invalid property operator."),
         };
@@ -192,6 +197,8 @@ internal static class FilterParser
         StartsWith,
 
         EndsWith,
+
+        Contains,
 
         In,
     }

@@ -50,6 +50,8 @@ public abstract class Filter
 
     public static Filter EndsWith(string name, string? value) => new EndsWithFilter(name, value);
 
+    public static Filter Contains(string name, string? value) => new ContainsFilter(name, value);
+
     public static Filter GreaterThan<T>(string name, T value) where T : IComparable<T> =>
         new GreaterThanFilter<T>(name, value);
 
