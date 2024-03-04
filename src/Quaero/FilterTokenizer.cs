@@ -8,15 +8,15 @@ namespace Quaero;
 internal static class FilterTokenizer
 {
     private static TextParser<Unit> String { get; } =
-        from open in Character.EqualTo('\'')
+        from open in Character.EqualTo('\"')
         from content in Character.EqualTo('\\').IgnoreThen(Character.AnyChar).Value(Unit.Value).Try()
-            .Or(Character.Except('\'').Value(Unit.Value))
+            .Or(Character.Except('\"').Value(Unit.Value))
             .IgnoreMany()
-        from close in Character.EqualTo('\'')
+        from close in Character.EqualTo('\"')
         select Unit.Value;
 
     private static TextParser<Unit> Guid { get; } =
-        from open in Character.EqualTo('\'')
+        from open in Character.EqualTo('\"')
         from content in Character.HexDigit.Repeat(8)
             .IgnoreThen(Character.EqualTo('-'))
             .IgnoreThen(Character.HexDigit.Repeat(4))
@@ -26,7 +26,7 @@ internal static class FilterTokenizer
             .IgnoreThen(Character.HexDigit.Repeat(4))
             .IgnoreThen(Character.EqualTo('-'))
             .IgnoreThen(Character.HexDigit.Repeat(12))
-        from close in Character.EqualTo('\'')
+        from close in Character.EqualTo('\"')
         select Unit.Value;
 
     private static TextParser<Unit> Number { get; } =

@@ -6,12 +6,12 @@ namespace Quaero;
 internal static class FilterTextParsers
 {
     public static TextParser<string> String { get; } =
-        from open in Character.EqualTo('\'')
-        from chars in Character.ExceptIn('\'', '\\')
+        from open in Character.EqualTo('\"')
+        from chars in Character.ExceptIn('\"', '\\')
             .Or(Character.EqualTo('\\')
                 .IgnoreThen(
                     Character.EqualTo('\\')
-                        .Or(Character.EqualTo('\''))
+                        .Or(Character.EqualTo('\"'))
                         .Or(Character.EqualTo('/'))
                         .Or(Character.EqualTo('b').Value('\b'))
                         .Or(Character.EqualTo('f').Value('\f'))
@@ -24,13 +24,13 @@ internal static class FilterTextParsers
                                 .Select(cc => (char)cc)))
                         .Named("escape sequence")))
             .Many()
-        from close in Character.EqualTo('\'')
+        from close in Character.EqualTo('\"')
         select new string(chars);
 
     public static TextParser<Guid> Guid { get; } =
-        from open in Character.EqualTo('\'')
+        from open in Character.EqualTo('\"')
         from content in Character.HexDigit.Or(Character.EqualTo('-')).Many()
-        from close in Character.EqualTo('\'')
+        from close in Character.EqualTo('\"')
         select System.Guid.Parse(new string(content));
 
     public static TextParser<double> Number { get; } =
