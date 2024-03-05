@@ -47,13 +47,14 @@ The language supports a wide range of operators supported by most filter/query l
 | `age ge 42`                                    | `age ge 42`                                    | `(age>=42)`                                             |
 | `age lt 42`                                    | `age lt 42`                                    | `(age<=41)`                                             |
 | `age le 42`                                    | `age le 42`                                    | `(age<=42)`                                             |
-| `name eq 'John'`                               | `name eq 'John'`                               | `(name=John)`                                           |
-| `name not eq 'John'`                           | `not(name eq 'John')'`                         | `(!(name=John))`                                        |
-| `department in ('Retail', 'Sales')`            | `department in ('Retail', 'Sales')`            | `(\|(department=Retail)(department=Sales))`             |
+| `name eq "John"`                               | `name eq 'John'`                               | `(name=John)`                                           |
+| `not(name eq "John")`                           | `not(name eq 'John')'`                         | `(!(name=John))`                                        |
+| `department in ("Retail", "Sales")`            | `department in ('Retail', 'Sales')`            | `(\|(department=Retail)(department=Sales))`             |
 | `isRead eq false`                              | `isRead eq false`                              | `(isRead=FALSE)`                                        |
-| `mail ew 'outlook.com'`                        | `endsWith(mail, 'outlook.com')`                | `(mail=*outlook.com)`                                   |
+| `mail ew "outlook.com"`                        | `endsWith(mail, 'outlook.com')`                | `(mail=*outlook.com)`                                   |
 | `parent ne null`                               | `parent ne null`                               | `(parent=*)`                                            |
-| `id eq '275e50ae-ceb8-4f33-9e68-b3b9dc87ea68'` | `id eq '275e50ae-ceb8-4f33-9e68-b3b9dc87ea68'` | `(id=\AE\50\5E\27\B8\CE\33\4F\9E\68\B3\B9\DC\87\EA\68)` |
+| `name pr`                                      | `name ne null`                                 | `(name=*)`
+| `id eq "275e50ae-ceb8-4f33-9e68-b3b9dc87ea68"` | `id eq '275e50ae-ceb8-4f33-9e68-b3b9dc87ea68'` | `(id=\AE\50\5E\27\B8\CE\33\4F\9E\68\B3\B9\DC\87\EA\68)` |
 
 ## Usage
 
