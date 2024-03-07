@@ -112,20 +112,27 @@ internal static class FilterParser
             .Named("value");
 
     private static TokenListParser<FilterToken, Filter> Predicate { get; } =
-        from negated in NotOperator.Optional()
-        from lparen in Token.EqualTo(FilterToken.OpenParen).Optional()
         from identifier in Token.EqualTo(FilterToken.Identifier)
         from @operator in PropertyOperators
         from value in Value.OptionalOrDefault(Unit.Value)
-        from rparen in Token.EqualTo(FilterToken.CloseParen).Optional()
-        select GetFilter(identifier, negated.HasValue, @operator, value);
+        select GetFilter(identifier, @operator, value);
 
-    private static readonly TokenListParser<FilterToken, Filter> Operand =
-        (from lparen in Token.EqualTo(FilterToken.OpenParen)
-         from expr in Parse.Ref(() => Expression!)
-         from rparen in Token.EqualTo(FilterToken.CloseParen)
-         select expr)
-        .Or(Predicate);
+    private static TokenListParser<FilterToken, Filter> Group { get; } =
+        from open in Token.EqualTo(FilterToken.OpenParen)
+        from predicate in Parse.Ref(() => Expression!)
+        from close in Token.EqualTo(FilterToken.CloseParen)
+        select predicate;
+
+    private static TokenListParser<FilterToken, Filter> Factor { get; } =
+        Group.Or(Predicate);
+
+    private static TokenListParser<FilterToken, Filter> Negated { get; } =
+        from op in NotOperator
+        from val in Group
+        select Filter.Not(val);
+
+    private static TokenListParser<FilterToken, Filter> Operand { get; } =
+        Negated.Or(Factor);
 
     private static TokenListParser<FilterToken, Filter> Expression { get; } = Parse.Chain(BinaryOperators, Operand, MakeLogicalOperator);
 
@@ -138,11 +145,11 @@ internal static class FilterParser
         _ => throw new ArgumentOutOfRangeException(nameof(@operator), @operator, "Invalid logical operator."),
     };
 
-    private static Filter GetFilter(Token<FilterToken> nameToken, bool negated, PropertyOperator @operator, object? value)
+    private static Filter GetFilter(Token<FilterToken> nameToken, PropertyOperator @operator, object? value)
     {
         var name = nameToken.ToStringValue();
 
-        var filter = @operator switch
+        return @operator switch
         {
             PropertyOperator.Equal => CreateFilter(typeof(EqualFilter<>), name, value),
             PropertyOperator.NotEqual => CreateFilter(typeof(NotEqualFilter<>), name, value),
@@ -157,8 +164,6 @@ internal static class FilterParser
             PropertyOperator.In => Filter.In(name, GetList(value)),
             _ => throw new ArgumentOutOfRangeException(nameof(@operator), @operator, "Invalid property operator."),
         };
-
-        return negated ? Filter.Not(filter) : filter;
     }
 
     private static string? GetString(object? value) => value switch

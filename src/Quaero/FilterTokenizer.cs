@@ -29,8 +29,8 @@ internal static class FilterTokenizer
             .Match(Character.EqualTo(','), FilterToken.Comma)
             .Match(Guid, FilterToken.Guid, requireDelimiters: true)
             .Match(QuotedString.CStyle, FilterToken.String, requireDelimiters: true)
-            .Match(Numerics.DecimalDouble, FilterToken.Decimal, requireDelimiters: true)
             .Match(Numerics.IntegerInt64, FilterToken.Integer, requireDelimiters: true)
+            .Match(Numerics.DecimalDouble, FilterToken.Decimal, requireDelimiters: true)
             .Match(Identifier.CStyle, FilterToken.Identifier, requireDelimiters: true)
             .Build();
 }
