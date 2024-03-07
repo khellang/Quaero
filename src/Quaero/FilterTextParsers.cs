@@ -32,19 +32,4 @@ internal static class FilterTextParsers
         from content in Character.HexDigit.Or(Character.EqualTo('-')).Many()
         from close in Character.EqualTo('\"')
         select System.Guid.Parse(new string(content));
-
-    public static TextParser<double> Number { get; } =
-        from sign in Character.EqualTo('-').Value(-1.0).OptionalOrDefault(1.0)
-        from whole in Numerics.Natural.Select(n => double.Parse(n.ToStringValue()))
-        from frac in Character.EqualTo('.')
-            .IgnoreThen(Numerics.Natural)
-            .Select(n => double.Parse(n.ToStringValue()) * Math.Pow(10, -n.Length))
-            .OptionalOrDefault()
-        from exp in Character.EqualToIgnoreCase('e')
-            .IgnoreThen(Character.EqualTo('+').Value(1.0)
-                .Or(Character.EqualTo('-').Value(-1.0))
-                .OptionalOrDefault(1.0))
-            .Then(expsign => Numerics.Natural.Select(n => double.Parse(n.ToStringValue()) * expsign))
-            .OptionalOrDefault()
-        select (whole + frac) * sign * Math.Pow(10, exp);
 }

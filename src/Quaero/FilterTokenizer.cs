@@ -29,12 +29,6 @@ internal static class FilterTokenizer
         from close in Character.EqualTo('\"')
         select Unit.Value;
 
-    private static TextParser<Unit> Number { get; } =
-        from sign in Character.EqualTo('-').OptionalOrDefault()
-        from first in Character.Digit
-        from rest in Character.Digit.Or(Character.In('.', 'e', 'E', '+', '-')).IgnoreMany()
-        select Unit.Value;
-
     public static Tokenizer<FilterToken> Instance { get; } =
         new TokenizerBuilder<FilterToken>()
             .Ignore(Span.WhiteSpace)
@@ -43,7 +37,8 @@ internal static class FilterTokenizer
             .Match(Character.EqualTo(','), FilterToken.Comma)
             .Match(Guid, FilterToken.Guid, requireDelimiters: true)
             .Match(String, FilterToken.String, requireDelimiters: true)
-            .Match(Number, FilterToken.Number, requireDelimiters: true)
+            .Match(Numerics.DecimalDouble, FilterToken.Decimal, requireDelimiters: true)
+            .Match(Numerics.IntegerInt64, FilterToken.Integer, requireDelimiters: true)
             .Match(Identifier.CStyle, FilterToken.Identifier, requireDelimiters: true)
             .Build();
 }

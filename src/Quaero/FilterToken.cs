@@ -4,7 +4,9 @@ namespace Quaero;
 
 internal enum FilterToken
 {
-    Number,
+    Integer,
+
+    Decimal,
 
     String,
 

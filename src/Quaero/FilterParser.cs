@@ -16,9 +16,14 @@ internal static class FilterParser
             .Apply(FilterTextParsers.Guid)
             .Select(s => (object)s);
 
-    private static TokenListParser<FilterToken, object> Number { get; } =
-        Token.EqualTo(FilterToken.Number)
-            .Apply(FilterTextParsers.Number)
+    private static TokenListParser<FilterToken, object> Integer { get; } =
+        Token.EqualTo(FilterToken.Integer)
+            .Apply(Numerics.IntegerInt64)
+            .Select(n => (object)n);
+
+    private static TokenListParser<FilterToken, object> Decimal { get; } =
+        Token.EqualTo(FilterToken.Decimal)
+            .Apply(Numerics.DecimalDouble)
             .Select(n => (object)n);
 
     private static TokenListParser<FilterToken, object> True { get; } =
@@ -98,7 +103,8 @@ internal static class FilterParser
     private static TokenListParser<FilterToken, object?> Value { get; } =
         String.AsNullable()
             .Or(Guid.AsNullable())
-            .Or(Number.AsNullable())
+            .Or(Integer.AsNullable())
+            .Or(Decimal.AsNullable())
             .Or(True.AsNullable())
             .Or(False.AsNullable())
             .Or(List.AsNullable())
