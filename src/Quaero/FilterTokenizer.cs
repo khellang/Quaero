@@ -7,14 +7,6 @@ namespace Quaero;
 
 internal static class FilterTokenizer
 {
-    private static TextParser<Unit> String { get; } =
-        from open in Character.EqualTo('\"')
-        from content in Character.EqualTo('\\').IgnoreThen(Character.AnyChar).Value(Unit.Value).Try()
-            .Or(Character.Except('\"').Value(Unit.Value))
-            .IgnoreMany()
-        from close in Character.EqualTo('\"')
-        select Unit.Value;
-
     private static TextParser<Unit> Guid { get; } =
         from open in Character.EqualTo('\"')
         from content in Character.HexDigit.Repeat(8)
@@ -36,7 +28,7 @@ internal static class FilterTokenizer
             .Match(Character.EqualTo(')'), FilterToken.CloseParen)
             .Match(Character.EqualTo(','), FilterToken.Comma)
             .Match(Guid, FilterToken.Guid, requireDelimiters: true)
-            .Match(String, FilterToken.String, requireDelimiters: true)
+            .Match(QuotedString.CStyle, FilterToken.String, requireDelimiters: true)
             .Match(Numerics.DecimalDouble, FilterToken.Decimal, requireDelimiters: true)
             .Match(Numerics.IntegerInt64, FilterToken.Integer, requireDelimiters: true)
             .Match(Identifier.CStyle, FilterToken.Identifier, requireDelimiters: true)

@@ -8,7 +8,7 @@ internal static class FilterParser
 {
     private static TokenListParser<FilterToken, object> String { get; } =
         Token.EqualTo(FilterToken.String)
-            .Apply(FilterTextParsers.String)
+            .Apply(QuotedString.CStyle)
             .Select(g => (object)g);
 
     private static TokenListParser<FilterToken, object> Guid { get; } =
