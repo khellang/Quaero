@@ -87,7 +87,6 @@ internal static class FilterParser
             .Or(StartsWithOperator)
             .Or(EndsWithOperator)
             .Or(ContainsOperator)
-            .Or(PresenceOperator)
             .Or(InOperator)
             .Named("property operator");
 
@@ -111,11 +110,19 @@ internal static class FilterParser
             .Or(Null)
             .Named("value");
 
-    private static TokenListParser<FilterToken, Filter> Predicate { get; } =
+    private static TokenListParser<FilterToken, Filter> PredicateWithoutArgument { get; } =
+        from identifier in Token.EqualTo(FilterToken.Identifier)
+        from @operator in PresenceOperator
+        select Filter.Present(identifier.ToStringValue());
+
+    private static TokenListParser<FilterToken, Filter>  PredicateWithArgument { get; } =
         from identifier in Token.EqualTo(FilterToken.Identifier)
         from @operator in PropertyOperators
-        from value in Value.OptionalOrDefault(Unit.Value)
+        from value in Value
         select GetFilter(identifier, @operator, value);
+
+    private static TokenListParser<FilterToken, Filter> Predicate { get; } =
+        PredicateWithoutArgument.Try().Or(PredicateWithArgument);
 
     private static TokenListParser<FilterToken, Filter> Group { get; } =
         Parse.Ref(() => Expression!)
@@ -158,7 +165,6 @@ internal static class FilterParser
             PropertyOperator.StartsWith => Filter.StartsWith(name, GetString(value)),
             PropertyOperator.EndsWith => Filter.EndsWith(name, GetString(value)),
             PropertyOperator.Contains => Filter.Contains(name, GetString(value)),
-            PropertyOperator.Presence => Filter.Present(name),
             PropertyOperator.In => Filter.In(name, GetList(value)),
             _ => throw new ArgumentOutOfRangeException(nameof(@operator), @operator, "Invalid property operator."),
         };
