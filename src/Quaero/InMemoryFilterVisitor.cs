@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 
 namespace Quaero;
 
@@ -119,7 +118,7 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
     {
         protected override bool TryGetPropertyAccessor(string name, [NotNullWhen(true)] out Func<T, object?>? accessor)
         {
-            if (PropertyCache.Properties.TryGetValue(name, out var property) && property.CanRead)
+            if (PropertyCache<T>.Properties.TryGetValue(name, out var property) && property.CanRead)
             {
                 accessor = resource => property.GetValue(resource)!;
                 return true;
@@ -128,15 +127,5 @@ public abstract class InMemoryFilterVisitor<T> : IFilterVisitor<Func<T, bool>>
             accessor = default;
             return false;
         }
-    }
-
-    private static class PropertyCache
-    {
-        // ReSharper disable once StaticMemberInGenericType
-        public static readonly Dictionary<string, PropertyInfo> Properties = GetProperties();
-
-        private static Dictionary<string, PropertyInfo> GetProperties() =>
-            typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .ToDictionary(x => x.Name, StringComparer.OrdinalIgnoreCase);
     }
 }

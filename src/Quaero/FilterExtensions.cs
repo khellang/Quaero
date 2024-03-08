@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace Quaero;
 
 /// <summary>
@@ -33,4 +35,13 @@ public static class FilterExtensions
     /// <returns>An in-memory predicate based on the specified <paramref name="filter"/>.</returns>
     public static Func<T, bool> ToPredicate<T>(this Filter filter, InMemoryFilterVisitor<T> visitor) =>
         visitor.Visit(filter);
+
+    /// <summary>
+    /// Converts the specified <paramref name="filter"/> to a LINQ expression.
+    /// </summary>
+    /// <param name="filter">The filter to convert.</param>
+    /// <typeparam name="T">The type the expression wil operate on.</typeparam>
+    /// <returns>A LINQ expression representing the specified <paramref name="filter"/>.</returns>
+    public static Expression<Func<T, bool>> ToExpression<T>(this Filter filter) =>
+        ExpressionFilterVisitor<T>.Instance.ToLambda(filter);
 }
