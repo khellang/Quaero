@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Quaero;
 
-public class ExpressionFilterVisitor<T> : IFilterVisitor<Expression>
+internal class ExpressionFilterVisitor<T> : IFilterVisitor<Expression>
 {
     public static readonly ExpressionFilterVisitor<T> Instance = new();
 
