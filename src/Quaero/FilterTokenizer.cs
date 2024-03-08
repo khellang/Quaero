@@ -26,6 +26,8 @@ internal static class FilterTokenizer
             .Ignore(Span.WhiteSpace)
             .Match(Character.EqualTo('('), FilterToken.OpenParen)
             .Match(Character.EqualTo(')'), FilterToken.CloseParen)
+            .Match(Character.EqualTo('['), FilterToken.OpenBracket)
+            .Match(Character.EqualTo(']'), FilterToken.CloseBracket)
             .Match(Character.EqualTo(','), FilterToken.Comma)
             .Match(Guid, FilterToken.Guid, requireDelimiters: true)
             .Match(QuotedString.CStyle, FilterToken.String, requireDelimiters: true)

@@ -97,7 +97,7 @@ internal static class FilterParser
     private static TokenListParser<FilterToken, object> List { get; } =
         Parse.Ref(() => Value!)
             .AtLeastOnceDelimitedBy(Token.EqualTo(FilterToken.Comma))
-            .Between(Token.EqualTo(FilterToken.OpenParen), Token.EqualTo(FilterToken.CloseParen))
+            .Between(Token.EqualTo(FilterToken.OpenBracket), Token.EqualTo(FilterToken.CloseBracket))
             .Select(x => (object)x);
 
     private static TokenListParser<FilterToken, object?> Value { get; } =
@@ -118,10 +118,8 @@ internal static class FilterParser
         select GetFilter(identifier, @operator, value);
 
     private static TokenListParser<FilterToken, Filter> Group { get; } =
-        from open in Token.EqualTo(FilterToken.OpenParen)
-        from predicate in Parse.Ref(() => Expression!)
-        from close in Token.EqualTo(FilterToken.CloseParen)
-        select predicate;
+        Parse.Ref(() => Expression!)
+            .Between(Token.EqualTo(FilterToken.OpenParen), Token.EqualTo(FilterToken.CloseParen));
 
     private static TokenListParser<FilterToken, Filter> Factor { get; } =
         Group.Or(Predicate);

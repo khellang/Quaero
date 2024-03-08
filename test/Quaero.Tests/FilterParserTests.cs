@@ -15,7 +15,7 @@ public class FilterParserTests
     [InlineData("domain sw \"example.com\"")]
     [InlineData("id eq 60 and id eq 1188")]
     [InlineData("id eq 60 or id eq 1188")]
-    [InlineData("domain in (\"outlook.com\", \"example.com\")")]
+    [InlineData("domain in [\"outlook.com\", \"example.com\"]")]
     [InlineData("not(userName eq \"admin\")")]
     [InlineData("isEnabled eq true")]
     [InlineData("isEnabled ne false")]

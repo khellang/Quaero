@@ -20,6 +20,12 @@ internal enum FilterToken
     [Token(Example = ")")]
     CloseParen,
 
+    [Token(Example = "[")]
+    OpenBracket,
+
+    [Token(Example = "]")]
+    CloseBracket,
+
     [Token(Example = ",")]
     Comma,
 }

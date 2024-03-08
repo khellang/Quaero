@@ -141,7 +141,7 @@ public abstract class Filter
         DateTime dateTime => $"\"{dateTime:O}\"",
         DateTimeOffset dateTimeOffset => $"\"{dateTimeOffset:O}\"",
         IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
-        IEnumerable<object> values => $"({string.Join(", ", values.Select(FormatValue))})",
+        IEnumerable<object> values => $"[{string.Join(", ", values.Select(FormatValue))}]",
         _ => value.ToString() ?? "null"
     };
 
