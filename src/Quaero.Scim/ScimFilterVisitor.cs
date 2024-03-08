@@ -33,15 +33,10 @@ public sealed class ScimFilterVisitor : StringFilterVisitor
         Operator(filter, builder, "eq");
 
     /// <inheritdoc />
-    public override StringBuilder VisitNotEqual<TValue>(NotEqualFilter<TValue> filter, StringBuilder builder)
-    {
-        if (filter.Value is null)
-        {
-            return Presence(filter, builder);
-        }
-
-        return Operator(filter, builder, "ne");
-    }
+    public override StringBuilder VisitNotEqual<TValue>(NotEqualFilter<TValue> filter, StringBuilder builder) =>
+        filter.Value is null
+            ? Presence(filter, builder)
+            : Operator(filter, builder, "ne");
 
     /// <inheritdoc />
     public override StringBuilder VisitStartsWith(StartsWithFilter filter, StringBuilder builder) =>
@@ -97,7 +92,7 @@ public sealed class ScimFilterVisitor : StringFilterVisitor
         DateTime dateTime => $"\"{dateTime:O}\"",
         DateTimeOffset dateTimeOffset => $"\"{dateTimeOffset:O}\"",
         IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
-        IEnumerable<object> values => $"({string.Join(", ", values.Select(FormatValue))})",
+        IEnumerable<object> => throw new NotSupportedException("SCIM does not support operators with multiple values."),
         _ => value.ToString() ?? "null"
     };
 

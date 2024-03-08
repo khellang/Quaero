@@ -24,23 +24,11 @@ internal sealed class FilterOptimizer : FilterTransformer
         return base.VisitIn(filter);
     }
 
-    private static Filter NormalizeNot(Filter filter)
+    private static Filter NormalizeNot(Filter filter) => filter switch
     {
-        if (filter is AndFilter and)
-        {
-            return new AndFilter(NormalizeNot(and.Left), NormalizeNot(and.Right));
-        }
-
-        if (filter is OrFilter or)
-        {
-            return new OrFilter(NormalizeNot(or.Left), NormalizeNot(or.Right));
-        }
-
-        if (filter is NotFilter not)
-        {
-            return NormalizeNot(not.Operand).Negate();
-        }
-
-        return filter;
-    }
+        AndFilter and => new AndFilter(NormalizeNot(and.Left), NormalizeNot(and.Right)),
+        OrFilter or => new OrFilter(NormalizeNot(or.Left), NormalizeNot(or.Right)),
+        NotFilter not => NormalizeNot(not.Operand).Negate(),
+        _ => filter
+    };
 }

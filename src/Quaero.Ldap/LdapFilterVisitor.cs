@@ -80,60 +80,36 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         VisitPropertyValueFilter(filter, builder, prefix: "*", suffix: "*");
 
     /// <inheritdoc />
-    public override StringBuilder VisitGreaterThan<T>(GreaterThanFilter<T> filter, StringBuilder builder)
+    public override StringBuilder VisitGreaterThan<T>(GreaterThanFilter<T> filter, StringBuilder builder) => filter.Value switch
     {
-        if (filter.Value is byte @byte)
-        {
-            return VisitFilter(filter.Name, @byte + 1, builder, ">=");
-        }
-
-        if (filter.Value is short @short)
-        {
-            return VisitFilter(filter.Name, @short + 1, builder, ">=");
-        }
-
-        if (filter.Value is int @int)
-        {
-            return VisitFilter(filter.Name, @int + 1, builder, ">=");
-        }
-
-        if (filter.Value is long @long)
-        {
-            return VisitFilter(filter.Name, @long + 1, builder, ">=");
-        }
-
-        return VisitNot(new NotFilter(filter.Negate()), builder);
-    }
+        byte @byte => VisitFilter(filter.Name, @byte + 1, builder, ">="),
+        sbyte @byte => VisitFilter(filter.Name, @byte + 1, builder, ">="),
+        short @short => VisitFilter(filter.Name, @short + 1, builder, ">="),
+        ushort @short => VisitFilter(filter.Name, @short + 1, builder, ">="),
+        int @int => VisitFilter(filter.Name, @int + 1, builder, ">="),
+        uint @int => VisitFilter(filter.Name, @int + 1, builder, ">="),
+        long @long => VisitFilter(filter.Name, @long + 1, builder, ">="),
+        ulong @long => VisitFilter(filter.Name, @long + 1, builder, ">="),
+        _ => VisitNot(new NotFilter(filter.Negate()), builder)
+    };
 
     /// <inheritdoc />
     public override StringBuilder VisitGreaterThanOrEqual<T>(GreaterThanOrEqualFilter<T> filter, StringBuilder builder) =>
         VisitPropertyValueFilter(filter, builder, ">=");
 
     /// <inheritdoc />
-    public override StringBuilder VisitLessThan<T>(LessThanFilter<T> filter, StringBuilder builder)
+    public override StringBuilder VisitLessThan<T>(LessThanFilter<T> filter, StringBuilder builder) => filter.Value switch
     {
-        if (filter.Value is byte @byte)
-        {
-            return VisitFilter(filter.Name, @byte - 1, builder, "<=");
-        }
-
-        if (filter.Value is short @short)
-        {
-            return VisitFilter(filter.Name, @short - 1, builder, "<=");
-        }
-
-        if (filter.Value is int @int)
-        {
-            return VisitFilter(filter.Name, @int - 1, builder, "<=");
-        }
-
-        if (filter.Value is long @long)
-        {
-            return VisitFilter(filter.Name, @long - 1, builder, "<=");
-        }
-
-        return VisitNot(new NotFilter(filter.Negate()), builder);
-    }
+        byte @byte => VisitFilter(filter.Name, @byte - 1, builder, "<="),
+        sbyte @byte => VisitFilter(filter.Name, @byte - 1, builder, "<="),
+        short @short => VisitFilter(filter.Name, @short - 1, builder, "<="),
+        ushort @short => VisitFilter(filter.Name, @short - 1, builder, "<="),
+        int @int => VisitFilter(filter.Name, @int - 1, builder, "<="),
+        uint @int => VisitFilter(filter.Name, @int - 1, builder, "<="),
+        long @long => VisitFilter(filter.Name, @long - 1, builder, "<="),
+        ulong @long => VisitFilter(filter.Name, @long - 1, builder, "<="),
+        _ => VisitNot(new NotFilter(filter.Negate()), builder)
+    };
 
     /// <inheritdoc />
     public override StringBuilder VisitLessThanOrEqual<T>(LessThanOrEqualFilter<T> filter, StringBuilder builder) =>
@@ -176,6 +152,7 @@ public sealed class LdapFilterVisitor : StringFilterVisitor
         DateTime dateTime => Format(dateTime.ToUniversalTime()),
         DateTimeOffset dateTimeOffset => Format(dateTimeOffset),
         IFormattable formattable => formattable.ToString(null, CultureInfo.InvariantCulture),
+        IEnumerable<object> => throw new NotSupportedException("LDAP does not support operators with multiple values."),
         _ => value.ToString() ?? "NULL",
     };
 
