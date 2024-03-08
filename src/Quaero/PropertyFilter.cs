@@ -21,7 +21,7 @@ public abstract class PropertyFilter : Filter, IEquatable<PropertyFilter>
     public string Name { get; }
 
     /// <inheritdoc />
-    public override bool Equals(object? other) => Equals(other as PropertyFilter);
+    public override bool Equals(Filter? other) => Equals(other as PropertyFilter);
 
     /// <inheritdoc />
     public bool Equals(PropertyFilter? other) => base.Equals(other) && Name == other.Name;

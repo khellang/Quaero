@@ -22,8 +22,8 @@ public abstract class PropertyValueFilter<T> : PropertyFilter, IEquatable<Proper
     /// </summary>
     public T Value { get; }
 
-    /// <inheritdoc/>
-    public override bool Equals(object? obj) => Equals(obj as PropertyValueFilter<T>);
+    /// <inheritdoc />
+    public override bool Equals(Filter? other) => Equals(other as PropertyValueFilter<T>);
 
     /// <inheritdoc/>
     public virtual bool Equals(PropertyValueFilter<T>? other) =>

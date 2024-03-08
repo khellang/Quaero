@@ -24,7 +24,7 @@ public abstract class UnaryFilter : Filter, IEquatable<UnaryFilter>
     public override string ToString() => $"{Operator}({Operand})";
 
     /// <inheritdoc />
-    public override bool Equals(object? obj) => Equals(obj as UnaryFilter);
+    public override bool Equals(Filter? other) => Equals(other as UnaryFilter);
 
     /// <inheritdoc />
     public virtual bool Equals(UnaryFilter? other) =>

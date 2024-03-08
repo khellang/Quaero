@@ -13,6 +13,11 @@ internal sealed class FilterOptimizer : FilterTransformer
         var left = Visit(filter.Left);
         var right = Visit(filter.Right);
 
+        if (left.Equals(right))
+        {
+            return left;
+        }
+
         if (left is NotFilter leftNot && right is NotFilter rightNot)
         {
             // DeMorgan simplification:
@@ -27,6 +32,11 @@ internal sealed class FilterOptimizer : FilterTransformer
     {
         var left = Visit(filter.Left);
         var right = Visit(filter.Right);
+
+        if (left.Equals(right))
+        {
+            return left;
+        }
 
         if (left is NotFilter leftNot && right is NotFilter rightNot)
         {

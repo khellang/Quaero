@@ -33,7 +33,7 @@ public abstract class BinaryFilter : Filter, IEquatable<BinaryFilter>
     public override string ToString() => $"({Left} {Operator} {Right})";
 
     /// <inheritdoc />
-    public override bool Equals(object? obj) => Equals(obj as BinaryFilter);
+    public override bool Equals(Filter? other) => Equals(other as BinaryFilter);
 
     /// <inheritdoc />
     public virtual bool Equals(BinaryFilter? other) =>
