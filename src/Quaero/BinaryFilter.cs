@@ -3,7 +3,7 @@ namespace Quaero;
 /// <summary>
 /// A base class representing binary logical operators.
 /// </summary>
-public abstract class BinaryFilter : Filter
+public abstract class BinaryFilter : Filter, IEquatable<BinaryFilter>
 {
     /// <summary>
     /// Constructs a new instance of a <see cref="BinaryFilter"/> with a
@@ -31,4 +31,16 @@ public abstract class BinaryFilter : Filter
 
     /// <inheritdoc/>
     public override string ToString() => $"({Left} {Operator} {Right})";
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => Equals(obj as BinaryFilter);
+
+    /// <inheritdoc />
+    public virtual bool Equals(BinaryFilter? other) =>
+        base.Equals(other)
+            && Left.Equals(other.Left)
+            && Right.Equals(other.Right);
+
+    /// <inheritdoc />
+    public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Left, Right);
 }

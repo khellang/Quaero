@@ -7,7 +7,7 @@ namespace Quaero;
 /// <summary>
 /// The base class for all filter expressions.
 /// </summary>
-public abstract class Filter
+public abstract class Filter : IEquatable<Filter>
 {
     protected Filter(string @operator)
     {
@@ -125,6 +125,28 @@ public abstract class Filter
     /// </summary>
     /// <returns>A formatted <see cref="string"/>, representing the filter expression.</returns>
     public abstract override string ToString();
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => Equals(obj as Filter);
+
+    /// <inheritdoc />
+    public virtual bool Equals(Filter? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (other.GetType() != GetType())
+        {
+            return false;
+        }
+
+        return Operator == other.Operator;
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode() => Operator.GetHashCode();
 
     /// <summary>
     /// Formats the specified <paramref name="value"/> into a <see cref="string"/>.

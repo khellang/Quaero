@@ -26,13 +26,13 @@ public abstract class PropertyValueFilter<T> : PropertyFilter, IEquatable<Proper
     public override bool Equals(object? obj) => Equals(obj as PropertyValueFilter<T>);
 
     /// <inheritdoc/>
-    public bool Equals(PropertyValueFilter<T>? other) =>
-        other is not null &&
+    public virtual bool Equals(PropertyValueFilter<T>? other) =>
+        base.Equals(other) &&
             StringComparer.OrdinalIgnoreCase.Equals(Name, other.Name) &&
                EqualityComparer<T>.Default.Equals(Value, other.Value);
 
     /// <inheritdoc/>
-    public override int GetHashCode() => HashCode.Combine(StringComparer.OrdinalIgnoreCase.GetHashCode(Name), Value);
+    public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), StringComparer.OrdinalIgnoreCase.GetHashCode(Name), Value);
 
     /// <inheritdoc/>
     public override string ToString() => $"{Name} {Operator} {FormatValue(Value)}";

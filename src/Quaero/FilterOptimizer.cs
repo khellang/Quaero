@@ -8,9 +8,35 @@ internal sealed class FilterOptimizer : FilterTransformer
 
     public override Filter Visit(Filter filter) => base.Visit(NormalizeNot(filter));
 
-    public override Filter VisitAnd(AndFilter filter) => Filter.And(Visit(filter.Left), Visit(filter.Right));
+    public override Filter VisitAnd(AndFilter filter)
+    {
+        var left = Visit(filter.Left);
+        var right = Visit(filter.Right);
 
-    public override Filter VisitOr(OrFilter filter) => Filter.Or(Visit(filter.Left), Visit(filter.Right));
+        if (left is NotFilter leftNot && right is NotFilter rightNot)
+        {
+            // DeMorgan simplification:
+            // (not A) and (not B) => not (A or B)
+            return Filter.Not(Filter.Or(leftNot.Operand, rightNot.Operand));
+        }
+
+        return Filter.And(left, right);
+    }
+
+    public override Filter VisitOr(OrFilter filter)
+    {
+        var left = Visit(filter.Left);
+        var right = Visit(filter.Right);
+
+        if (left is NotFilter leftNot && right is NotFilter rightNot)
+        {
+            // DeMorgan simplification:
+            // (not A) or (not B) => not (A and B)
+            return Filter.Not(Filter.And(leftNot.Operand, rightNot.Operand));
+        }
+
+        return Filter.Or(left, right);
+    }
 
     public override Filter VisitNot(NotFilter filter) => Filter.Not(Visit(filter.Operand));
 

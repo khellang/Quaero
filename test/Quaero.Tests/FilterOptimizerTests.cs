@@ -10,6 +10,16 @@
         }
 
         [Fact]
+        public void ShouldPerformDeMorganSimplification()
+        {
+            var filter = Not(Present("name")).And(Not(Present("age"))).Optimize();
+            Assert.Equal(Not(Present("name").Or(Present("age"))), filter);
+
+            filter = Not(Present("name")).Or(Not(Present("age"))).Optimize();
+            Assert.Equal(Not(Present("name").And(Present("age"))), filter);
+        }
+
+        [Fact]
         public void ShouldNormalizeNotEqual()
         {
             var filter = Not(Equal("test", 42)).Optimize();
