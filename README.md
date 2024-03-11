@@ -2,10 +2,7 @@
 
 A small query language that can transform queries into system-specific filters.
 
-Quaero is designed to be web-friendly by using letter-based operators instead of symbols. It's very similar to Microsoft Graph (OData) and SCIM filter syntax, with a few minor differences:
-1. Infix `not` operators
-2. Infix function operators
-
+Quaero is designed to be web-friendly by using letter-based operators instead of symbols. It's very similar to Microsoft Graph (OData) and SCIM filter syntax.
 See [example queries](#example-queries) for some examples.
 
 This repository contains translation implementations for Microsoft Graph, Active Directory (LDAP) and SCIM filters, as well as in-memory predicates.
