@@ -76,7 +76,7 @@ internal class ExpressionFilterVisitor<T> : IFilterVisitor<Expression>
 
     /// <inheritdoc />
     public Expression VisitPresence(PresenceFilter filter) =>
-        VisitPropertyFilter(filter, member => Expression.NotEqual(member, Expression.Constant(null)));
+        VisitPropertyFilter(filter, Expression.Constant(null), Expression.NotEqual);
 
     /// <inheritdoc />
     public Expression VisitIn<TValue>(InFilter<TValue> filter) =>
@@ -85,22 +85,28 @@ internal class ExpressionFilterVisitor<T> : IFilterVisitor<Expression>
     private Expression VisitStringFilter(PropertyValueFilter<string?> filter, MethodInfo method) =>
         VisitPropertyValueFilter(filter, (member, value) => Expression.Call(member, method, value));
 
-    private Expression VisitPropertyValueFilter<TValue>(PropertyValueFilter<TValue> filter, Func<Expression, Expression, Expression> getExpression)
-    {
-        var value = Expression.Constant(filter.Value, typeof(TValue));
-        return VisitPropertyFilter(filter, member => getExpression(member, value));
-    }
+    private Expression VisitPropertyValueFilter<TValue>(PropertyValueFilter<TValue> filter, Func<Expression, Expression, Expression> getExpression) =>
+        VisitPropertyFilter(filter, Expression.Constant(filter.Value, typeof(TValue)), getExpression);
 
-    private Expression VisitPropertyFilter(PropertyFilter filter, Func<Expression, Expression> getExpression) =>
-        getExpression(GetMemberAccess(Parameter, filter.Name));
-
-    private static MemberExpression GetMemberAccess(Expression expression, string name)
+    private Expression VisitPropertyFilter(PropertyFilter filter, Expression value, Func<Expression, Expression, Expression> getExpression)
     {
-        if (PropertyCache<T>.Properties.TryGetValue(name, out var propertyInfo))
+        var member = GetMemberAccess(Parameter, filter.Name);
+
+        if (value.Type != member.Type)
         {
-            return Expression.MakeMemberAccess(expression, propertyInfo);
+            value = Expression.Convert(value, member.Type);
         }
 
-        throw new MissingMemberException(typeof(T).FullName, name);
+        return getExpression(member, value);
+
+        static MemberExpression GetMemberAccess(ParameterExpression expression, string name)
+        {
+            if (PropertyCache<T>.Properties.TryGetValue(name, out var propertyInfo))
+            {
+                return Expression.MakeMemberAccess(expression, propertyInfo);
+            }
+
+            throw new MissingMemberException(typeof(T).FullName, name);
+        }
     }
 }
