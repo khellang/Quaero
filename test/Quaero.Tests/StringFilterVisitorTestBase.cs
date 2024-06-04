@@ -1,6 +1,5 @@
 namespace Quaero.Tests;
 
-[UsesVerify]
 public abstract class StringFilterVisitorTestBase : FilterVisitorTestBase
 {
     protected override Task AssertFilter(Filter filter)

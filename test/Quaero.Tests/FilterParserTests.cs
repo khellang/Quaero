@@ -1,6 +1,5 @@
 namespace Quaero.Tests;
 
-[UsesVerify]
 public class FilterParserTests
 {
     [Theory]
