@@ -1,4 +1,5 @@
-﻿using Quaero;
+﻿using ExpressionTreeToString;
+using Quaero;
 using Spectre.Console;
 using Superpower;
 
@@ -18,6 +19,7 @@ while (line != null)
             AnsiConsole.MarkupLineInterpolated($"Graph: [blue]{filter.ToMicrosoftGraphFilter()}[/]");
             AnsiConsole.MarkupLineInterpolated($"LDAP: [purple]{filter.ToLdapFilter()}[/]");
             AnsiConsole.MarkupLineInterpolated($"SCIM: [green]{filter.ToScimFilter()}[/]");
+            AnsiConsole.MarkupLineInterpolated($"Expression: [cyan]{filter.ToExpression<Person>().ToString(BuiltinRenderer.CSharp)}[/]");
         }
         catch (ParseException e)
         {
@@ -35,3 +37,5 @@ while (line != null)
     Console.Write(prompt);
     line = Console.ReadLine();
 }
+
+public record Person(string GivenName, string FamilyName, int Age);
