@@ -1,3 +1,4 @@
+using System.Numerics;
 using Superpower;
 using Superpower.Model;
 using Superpower.Parsers;
@@ -18,8 +19,28 @@ internal static class FilterParser
 
     private static TokenListParser<FilterToken, object> Integer { get; } =
         Token.EqualTo(FilterToken.Integer)
-            .Apply(Numerics.IntegerInt64)
-            .Select(n => (object)n);
+            .Apply(Numerics.Integer)
+            .Select(n => ParseInteger(n.ToStringValue()));
+
+    private static object ParseInteger(string value)
+    {
+        if (int.TryParse(value, out var intValue))
+        {
+            return intValue;
+        }
+
+        if (long.TryParse(value, out var longValue))
+        {
+            return longValue;
+        }
+
+        if (BigInteger.TryParse(value, out var bigInteger))
+        {
+            return bigInteger;
+        }
+
+        throw new ParseException($"Value '{value}' is not a valid integer.");
+    }
 
     private static TokenListParser<FilterToken, object> Decimal { get; } =
         Token.EqualTo(FilterToken.Decimal)
