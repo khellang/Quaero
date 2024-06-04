@@ -1,7 +1,7 @@
 namespace Quaero;
 
 /// <summary>
-/// A filter representing the binary logical AND operator.
+/// A filter representing the binary logical OR operator.
 /// </summary>
 public sealed class OrFilter : BinaryFilter
 {
