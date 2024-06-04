@@ -19,7 +19,7 @@ while (line != null)
             AnsiConsole.MarkupLineInterpolated($"Graph: [blue]{filter.ToMicrosoftGraphFilter()}[/]");
             AnsiConsole.MarkupLineInterpolated($"LDAP: [purple]{filter.ToLdapFilter()}[/]");
             AnsiConsole.MarkupLineInterpolated($"SCIM: [green]{filter.ToScimFilter()}[/]");
-            AnsiConsole.MarkupLineInterpolated($"Expression: [cyan]{filter.ToExpression<Person>().ToString(BuiltinRenderer.CSharp)}[/]");
+            AnsiConsole.MarkupLineInterpolated($"C#: [cyan]{filter.ToExpression<Person>().ToString(BuiltinRenderer.CSharp)}[/]");
         }
         catch (ParseException e)
         {
