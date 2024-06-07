@@ -6,11 +6,14 @@ public sealed class LessThanFilter<T> : PropertyValueFilter<T> where T : ICompar
     {
     }
 
+    /// <inheritdoc />
     public override TState Accept<TResult, TState>(IFilterVisitor<TResult, TState> visitor, TState state) =>
         visitor.VisitLessThan(this, state);
 
+    /// <inheritdoc />
     public override TResult Accept<TResult>(IFilterVisitor<TResult> visitor) =>
         visitor.VisitLessThan(this);
 
+    /// <inheritdoc />
     public override Filter Negate() => GreaterThanOrEqual(Name, Value);
 }

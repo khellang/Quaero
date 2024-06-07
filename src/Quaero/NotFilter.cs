@@ -24,6 +24,6 @@ public sealed class NotFilter : UnaryFilter
     /// <summary>
     /// Negates the filter by removing the wrapping NOT operator.
     /// </summary>
-    /// <returns>A negated filter witout a wrapping NOT operator.</returns>
+    /// <returns>A negated filter without a wrapping NOT operator.</returns>
     public override Filter Negate() => Operand;
 }

@@ -7,11 +7,11 @@ public sealed class PresenceFilter : PropertyFilter
     }
 
     /// <inheritdoc />
-    public override TState Accept<TResult, TState>(IFilterVisitor<TResult, TState> visitor, TState state) => 
+    public override TState Accept<TResult, TState>(IFilterVisitor<TResult, TState> visitor, TState state) =>
         visitor.VisitPresence(this, state);
 
     /// <inheritdoc />
-    public override TResult Accept<TResult>(IFilterVisitor<TResult> visitor) => 
+    public override TResult Accept<TResult>(IFilterVisitor<TResult> visitor) =>
         visitor.VisitPresence(this);
 
     /// <inheritdoc />
