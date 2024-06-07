@@ -68,13 +68,37 @@ public abstract class Filter : IEquatable<Filter>
 
     public static Filter Not(Filter filter) => new NotFilter(filter);
 
-    public static Filter And(Filter left, Filter right) => new AndFilter(left, right);
+    [return: NotNullIfNotNull(nameof(left))]
+    [return: NotNullIfNotNull(nameof(right))]
+    public static Filter? And(Filter? left, Filter? right)
+    {
+        if (left is null)
+        {
+            return right;
+        }
 
-    public static Filter Or(Filter left, Filter right) => new OrFilter(left, right);
+        if (right is null)
+        {
+            return left;
+        }
 
-    public Filter And(Filter other) => And(this, other);
+        return new AndFilter(left, right);
+    }
 
-    public Filter Or(Filter other) => Or(this, other);
+    public static Filter? Or(Filter? left, Filter? right)
+    {
+        if (left is null || right is null)
+        {
+            return null;
+        }
+
+        return new OrFilter(left, right);
+    }
+
+    public Filter And(Filter? other) => And(this, other);
+
+    [return: NotNullIfNotNull(nameof(other))]
+    public Filter? Or(Filter? other) => Or(this, other);
 
     /// <summary>
     /// Negates the filter.

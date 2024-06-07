@@ -26,5 +26,5 @@ public sealed class AndFilter : BinaryFilter
     /// Negates the AND expression, producing an OR expression.
     /// </summary>
     /// <returns>The negated AND expression as an OR expression.</returns>
-    public override Filter Negate() => Or(Left.Negate(), Right.Negate());
+    public override Filter Negate() => Left.Negate().Or(Right.Negate());
 }
