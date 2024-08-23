@@ -62,6 +62,6 @@ public abstract class StringFilterVisitor : IFilterVisitor<string, StringBuilder
     public virtual StringBuilder VisitIn<T>(InFilter<T> filter, StringBuilder builder) =>
         filter.Value
             .Select(x => Filter.Equal(filter.Name, x))
-            .Aggregate(Filter.Or)
+            .Aggregate((acc, current) => acc.Or(current))
             .Accept(this, builder);
 }

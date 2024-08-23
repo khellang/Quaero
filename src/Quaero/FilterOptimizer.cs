@@ -22,10 +22,10 @@ internal sealed class FilterOptimizer : FilterTransformer
         {
             // DeMorgan simplification:
             // (not A) and (not B) => not (A or B)
-            return Filter.Not(Filter.Or(leftNot.Operand, rightNot.Operand));
+            return Filter.Not(leftNot.Operand.Or(rightNot.Operand));
         }
 
-        return Filter.And(left, right);
+        return left.And(right);
     }
 
     public override Filter VisitOr(OrFilter filter)
@@ -42,10 +42,10 @@ internal sealed class FilterOptimizer : FilterTransformer
         {
             // DeMorgan simplification:
             // (not A) or (not B) => not (A and B)
-            return Filter.Not(Filter.And(leftNot.Operand, rightNot.Operand));
+            return Filter.Not(leftNot.Operand.And(rightNot.Operand));
         }
 
-        return Filter.Or(left, right);
+        return left.Or(right);
     }
 
     public override Filter VisitNot(NotFilter filter) => Filter.Not(Visit(filter.Operand));
@@ -62,8 +62,8 @@ internal sealed class FilterOptimizer : FilterTransformer
 
     private static Filter NormalizeNot(Filter filter) => filter switch
     {
-        AndFilter and => new AndFilter(NormalizeNot(and.Left), NormalizeNot(and.Right)),
-        OrFilter or => new OrFilter(NormalizeNot(or.Left), NormalizeNot(or.Right)),
+        AndFilter and => NormalizeNot(and.Left).And(NormalizeNot(and.Right)),
+        OrFilter or => NormalizeNot(or.Left).Or(NormalizeNot(or.Right)),
         NotFilter not => NormalizeNot(not.Operand).Negate(),
         _ => filter
     };

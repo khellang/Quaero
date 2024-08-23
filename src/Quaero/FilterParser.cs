@@ -166,8 +166,8 @@ internal static class FilterParser
 
     private static Filter MakeLogicalOperator(LogicalOperator @operator, Filter left, Filter right) => @operator switch
     {
-        LogicalOperator.And => Filter.And(left, right),
-        LogicalOperator.Or => Filter.Or(left, right),
+        LogicalOperator.And => left.And(right),
+        LogicalOperator.Or => left.Or(right),
         _ => throw new ArgumentOutOfRangeException(nameof(@operator), @operator, "Invalid logical operator."),
     };
 
