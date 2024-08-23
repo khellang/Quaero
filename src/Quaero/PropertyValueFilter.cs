@@ -27,12 +27,10 @@ public abstract class PropertyValueFilter<T> : PropertyFilter, IEquatable<Proper
 
     /// <inheritdoc/>
     public virtual bool Equals(PropertyValueFilter<T>? other) =>
-        base.Equals(other) &&
-            StringComparer.OrdinalIgnoreCase.Equals(Name, other.Name) &&
-               EqualityComparer<T>.Default.Equals(Value, other.Value);
+        base.Equals(other) && EqualityComparer<T>.Default.Equals(Value, other.Value);
 
     /// <inheritdoc/>
-    public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), StringComparer.OrdinalIgnoreCase.GetHashCode(Name), Value);
+    public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Value);
 
     /// <inheritdoc/>
     public override string ToString() => $"{Name} {Operator} {FormatValue(Value)}";

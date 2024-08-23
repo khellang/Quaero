@@ -5,6 +5,8 @@ namespace Quaero;
 /// </summary>
 public abstract class PropertyFilter : Filter, IEquatable<PropertyFilter>
 {
+    private static readonly StringComparer Comparer = StringComparer.OrdinalIgnoreCase;
+
     /// <summary>
     /// Constructs a new instance of a <see cref="PropertyFilter"/>.
     /// </summary>
@@ -24,8 +26,8 @@ public abstract class PropertyFilter : Filter, IEquatable<PropertyFilter>
     public override bool Equals(Filter? other) => Equals(other as PropertyFilter);
 
     /// <inheritdoc />
-    public bool Equals(PropertyFilter? other) => base.Equals(other) && Name == other.Name;
+    public bool Equals(PropertyFilter? other) => base.Equals(other) && Comparer.Equals(Name, other.Name);
 
     /// <inheritdoc />
-    public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Name);
+    public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Comparer.GetHashCode(Name));
 }
