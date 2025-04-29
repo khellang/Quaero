@@ -19,7 +19,7 @@
         <IncludeSymbols>true</IncludeSymbols>
         <RepositoryType>git</RepositoryType>
 
-        <PackageTags>query;language;ldap;microsoft;graph</PackageTags>
+        <PackageTags>query;language</PackageTags>
         <Authors>Kristian Hellang</Authors>
 
         <PackageReadmeFile>README.md</PackageReadmeFile>
