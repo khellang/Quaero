@@ -1,97 +1,144 @@
 # Quaero
 
-A small query language that can transform queries into system-specific filters.
+> A web-friendly query language that transforms into Microsoft Graph, Active Directory, and SCIM filters
 
-Quaero is designed to be web-friendly by using letter-based operators instead of symbols. It's very similar to Microsoft Graph (OData) and SCIM filter syntax.
-See [example queries](#example-queries) for some examples.
+[![NuGet](https://img.shields.io/nuget/v/Quaero.svg)](https://www.nuget.org/packages/Quaero)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/khellang/Quaero/ci.yml?branch=main)](https://github.com/khellang/Quaero/actions)
 
-This repository contains translation implementations for Microsoft Graph, Active Directory (LDAP) and SCIM filters, as well as in-memory predicates.
+## What is Quaero?
 
-## Supported operators
+Quaero is a small, intuitive query language designed to unify filtering across different systems.
+Instead of learning multiple query syntaxes for Microsoft Graph, LDAP, and SCIM, you write queries once in Quaero and transform them into the target system's native filter format.
 
-The language supports a wide range of operators supported by most filter/query languages.
+**Key Benefits:**
+- **Universal syntax** - Write queries once, use everywhere
+- **Web-friendly** - Uses readable operators like `eq`, `gt`, `and` instead of symbols
+- **Type-safe** - Built for .NET with strong typing support
+- **Optimizable** - Automatic query optimization removes redundancies
 
-### Equality operators
+## Quick Start
 
-- Equals (`eq`)
-- Not equals (`ne`)
-- Logical negation (`not`)
-- In (`in`)
+### Installation
 
-### Relational operators
+```bash
+# Core library
+dotnet add package Quaero
 
-- Less than (`lt`)
-- Greater than (`gt`)
-- Less than or equal to (`le`)
-- Greater than or equal to (`ge`)
-
-### Conditional operators
-
-- And (`and`)
-- Or (`or`)
-
-### Functions
-
-- Starts with (`sw`)
-- Ends with (`ew`)
-- Contains (`co`)
-
-## Example queries
-
-| Quaero                                         | Microsoft Graph                                | LDAP                                                    | SCIM                                                |
-|------------------------------------------------|------------------------------------------------|---------------------------------------------------------|-----------------------------------------------------|
-| `age gt 42`                                    | `age gt 42`                                    | `(age>=43)`                                             | `age gt 42`                                         |
-| `age ge 42`                                    | `age ge 42`                                    | `(age>=42)`                                             | `age ge 42`                                         |
-| `age lt 42`                                    | `age lt 42`                                    | `(age<=41)`                                             | `age lt 42`                                         |
-| `age le 42`                                    | `age le 42`                                    | `(age<=42)`                                             | `age le 42`                                         |
-| `name eq "John"`                               | `name eq 'John'`                               | `(name=John)`                                           | `name eq "John"`                                    |
-| `not(name eq "John")`                          | `name ne 'John'`                               | `(!(name=John))`                                        | `name ne "John"`                                    |
-| `department in ["Retail", "Sales"]`            | `department in ('Retail', 'Sales')`            | `(\|(department=Retail)(department=Sales))`             | `(department eq "Retail" or department eq "Sales")` |
-| `isRead eq false`                              | `isRead eq false`                              | `(isRead=FALSE)`                                        | `isRead eq false`                                   |
-| `mail ew "outlook.com"`                        | `endsWith(mail, 'outlook.com')`                | `(mail=*outlook.com)`                                   | `mail ew "outlook.com"`                             |
-| `parent ne null`                               | `parent ne null`                               | `(parent=*)`                                            | `parent pr`                                         |
-| `name pr`                                      | `name ne null`                                 | `(name=*)`                                              | `name pr`                                           |
-| `id eq "275e50ae-ceb8-4f33-9e68-b3b9dc87ea68"` | `id eq '275e50ae-ceb8-4f33-9e68-b3b9dc87ea68'` | `(id=\AE\50\5E\27\B8\CE\33\4F\9E\68\B3\B9\DC\87\EA\68)` | `id eq "275e50ae-ceb8-4f33-9e68-b3b9dc87ea68"`      |
-
-## Usage
-
-Either parse a filter expression from a string using `Filter.Parse` or `Filter.TryParse`:
-
-```csharp
-Filter filter = Filter.Parse("age gt 42");
+# Target-specific packages
+dotnet add package Quaero.MicrosoftGraph
+dotnet add package Quaero.Ldap  
+dotnet add package Quaero.Scim
 ```
 
-Or manually construct a filter expression using the factory methods on the `Filter` class:
+### Basic Usage
 
 ```csharp
-Filter filter = Filter.GreaterThan("age", 42);
+using Quaero;
+
+// Parse a filter from string
+Filter filter = Filter.Parse("age gt 42 and department eq \"Engineering\"");
+
+// Or build programmatically
+Filter filter = Filter.And(
+    Filter.GreaterThan("age", 42),
+    Filter.Equals("department", "Engineering")
+);
+
+// Transform to target system
+string microsoftGraph = filter.ToMicrosoftGraphFilter();
+string ldapFilter = filter.ToLdapFilter(); 
+string scimFilter = filter.ToScimFilter();
+
+// Use in-memory
+Func<Employee, bool> predicate = filter.ToPredicate<Employee>();
 ```
 
-Once the filter has been successfully parsed, it can be optimized by calling the `Optimize` extension method. This will take care of removing redundancies and shortening the resulting query.
+## Supported Operators
 
-To transform the query into an LDAP filter, reference the `Quaero.Ldap` package and call the `ToLdapFilter` method on it:
+| Operator | Description | Example |
+|----------|-------------|---------|
+| `eq` | Equals | `name eq "John"` |
+| `ne` | Not equals | `status ne "inactive"` |
+| `gt` | Greater than | `age gt 21` |
+| `ge` | Greater than or equal | `salary ge 50000` |
+| `lt` | Less than | `score lt 100` |
+| `le` | Less than or equal | `rating le 5` |
+| `sw` | Starts with | `email sw "admin"` |
+| `ew` | Ends with | `domain ew ".com"` |
+| `co` | Contains | `title co "Manager"` |
+| `in` | In list | `status in ["active", "pending"]` |
+| `pr` | Present (not null) | `phoneNumber pr` |
+| `and` | Logical AND | `age gt 18 and verified eq true` |
+| `or` | Logical OR | `role eq "admin" or role eq "moderator"` |
+| `not` | Logical NOT | `not(status eq "deleted")` |
+
+## Translation Examples
+
+Here's how the same Quaero query translates across different systems:
+
+| System | Query |
+|-------|---------------------------------------------|
+| **Quaero** | `age gt 42 and department eq "Engineering"` |
+| **Microsoft Graph** | `age gt 42 and department eq 'Engineering'` |
+| **LDAP** | `(&(age>=43)(department=Engineering))` |
+| **SCIM** | `age gt 42 and department eq "Engineering"` |
+
+### Complex Query Example
 
 ```csharp
-string result = filter.ToLdapFilter();
+// Quaero query
+string query = @"(department in [""Sales"", ""Marketing""] and salary ge 75000) 
+                 or (role eq ""Senior Developer"" and experience gt 5)";
+
+Filter filter = Filter.Parse(query);
+
+// Microsoft Graph: ((department in ('Sales', 'Marketing') and salary ge 75000) or (role eq 'Senior Developer' and experience gt 5))
+// LDAP: (|((&(|(department=Sales)(department=Marketing))(salary>=75000))(&(role=Senior Developer)(experience>=6))))
+// SCIM: (department in ["Sales", "Marketing"] and salary ge 75000) or (role eq "Senior Developer" and experience gt 5)
 ```
 
-For Microsoft Graph, reference the `Quaero.MicrosoftGraph` package and call `ToMicrosoftGraphFilter` on the filter:
+## Advanced Features
+
+### Query Optimization
 
 ```csharp
-string result = filter.ToMicrosoftGraphFilter();
+Filter filter = Filter.Parse("name eq \"John\" and name eq \"John\"");
+Filter optimized = filter.Optimize(); // Removes redundant conditions
 ```
 
-And for SCIM, reference the `Quaero.Scim` package and call `ToScimFilter` on the filter:
+### In-Memory Evaluation
 
 ```csharp
-string result = filter.ToScimFilter();
+record Employee(string Name, int Age, string Department);
+
+var employees = new List<Employee> 
+{
+    new("Alice", 30, "Engineering"),
+    new("Bob", 45, "Sales"),
+    new("Carol", 28, "Engineering")
+};
+
+Filter filter = Filter.Parse("age gt 35 or department eq \"Engineering\"");
+Func<Employee, bool> predicate = filter.ToPredicate<Employee>();
+
+var results = employees.Where(predicate).ToList();
+// Returns: Alice, Bob, Carol
 ```
 
-If you want to evaluate a filter in-memory, you can call the `ToPredicate<T>` method on it:
+## Error Handling
 
 ```csharp
-record Person(string Name, int Age);
-Func<Person, bool> predicate = filter.ToPredicate<Person>();
+// Safe parsing
+if (Filter.TryParse("invalid query", out Filter? filter))
+{
+    // Success
+    string result = filter.ToMicrosoftGraphFilter();
+}
+else
+{
+    // Handle parse error
+    Console.WriteLine("Invalid query syntax");
+}
 ```
 
 ## Sponsors
